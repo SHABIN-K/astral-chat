@@ -15,7 +15,7 @@ const Footer = () => {
         <Link href="https://www.instagram.com/_shabink/" target="_blank">
           <FaInstagram size={25} />
         </Link>
-        <Link href="https://github.com/BuildNShip" target="_blank">
+        <Link href="https://github.com/SHABIN-K" target="_blank">
           <FaGithub size={25} />
         </Link>
         <Link href="https://t.me/ericdaniyel" target="_blank">
