@@ -6,7 +6,7 @@ export default function Home() {
   return (
     <div className="flex flex-col items-center justify-center space-y-10 mt-10 sm:mt-28">
       <svg
-        className="absolute pointer-events-none inset-0 h-full w-full stroke-gray-200 opacity-50 [mask-image:radial-gradient(100%_100%_at_top_center,white,transparent)]"
+        className="absolute pointer-events-none inset-0 h-full w-full stroke-gray-500 dark:stroke-gray-200 opacity-50 [mask-image:radial-gradient(100%_100%_at_top_center,white,transparent)]"
         aria-hidden
       >
         <defs>
@@ -21,7 +21,7 @@ export default function Home() {
             <path d="M100 200V.5M.5 .5H200" fill="none" />
           </pattern>
         </defs>
-        <svg x="50%" y={-1} className="overflow-visible fill-gray-50">
+        <svg x="50%" y={-1} className="overflow-visible fill-gray-300 dark:fill-[#f9fafb2f]">
           <path
             d="M-100.5 0h201v201h-201Z M699.5 0h201v201h-201Z M499.5 400h201v201h-201Z M-300.5 600h201v201h-201Z"
             strokeWidth={0}
