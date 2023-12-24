@@ -1,6 +1,7 @@
 import { Inter } from "next/font/google";
 import "./globals.css";
 import ColorProvider from "@/modules/providers/ColorProvider";
+import { Toaster } from "sonner";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -13,6 +14,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <ColorProvider>
+        <Toaster />
         <body className={inter.className}>{children}</body>
       </ColorProvider>
     </html>
