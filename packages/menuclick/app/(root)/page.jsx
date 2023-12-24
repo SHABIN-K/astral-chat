@@ -6,9 +6,15 @@ export default function Home() {
   return (
     <div className="flex flex-col items-center justify-center space-y-10 mt-10 sm:mt-28">
       <Background />
-      <div className="absolute right-0 top-0 mr-6">
+      <div
+        aria-hidden
+        className="absolute top-10 w-[1000px] z-10 h-[400px] left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-[0.15] pointer-events-none"
+        style={{ backgroundImage: "radial-gradient(#A4A4A3, transparent 50%)" }}
+      />
+      <div className="absolute right-0 top-0 mr-10">
         <ThemeSwitcher />
       </div>
+
       <div className="flex flex-col items-center space-y-6">
         <h1 className="max-w-3xl text-center font-bold text-gray-900 dark:text-white text-5xl leading-tight">
           Welcome to MenuCLick <br /> Digital Food Menus for Restaurants
