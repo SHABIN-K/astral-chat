@@ -5,7 +5,7 @@ import Background from "@/components/ui/Background";
 export default function NotFound() {
   return (
     <div className="grid h-screen place-content-center bg-color px-4">
-      <Background />
+      <Background size={10} />
       <div className="text-center">
         <h1 className="text-9xl font-black text-color">404</h1>
 

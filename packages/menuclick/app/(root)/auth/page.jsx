@@ -1,31 +1,44 @@
 /* eslint-disable react/no-unescaped-entities */
-import Image from "next/image";
-import Background from "@/components/ui/Background";
+"use client";
 import Link from "next/link";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { signIn, useSession } from "next-auth/react";
+
+import Background from "@/components/ui/Background";
+import { Logo } from "@/public/assets";
 
 const Authentication = () => {
+  const router = useRouter();
+  const { data: session } = useSession();
+  const handleSignInBtn = () => {
+    if (session) {
+      alert("already logged in");
+      router.push("/");
+    } else {
+      signIn("google");
+      router.push("/dashboard");
+    }
+  };
   return (
     <div className="fixed grid place-items-center top-0 right-0 left-0 z-50 w-full inset-0 h-full justify-center items-center">
-      <Background />
+      <Background size={10}/>
       <div className="relative container m-auto px-6">
         <div className="m-auto md:w-7/12">
           <div className="rounded-xl bg-white dark:bg-black shadow-xl shadow-[#3a31316f]">
             <div className="p-8">
-              <div className="space-y-4">
-                <Image
-                  src="https://www.svgrepo.com/show/475643/dribbble-color.svg"
-                  loading="lazy"
-                  width={10}
-                  height={10}
-                  className="w-10"
-                  alt="google logo"
-                />
-                <h2 className="mb-8 text-2xl text-gray-900 dark:text-white font-bold">
+              <div className="space-y-4 text-gray-900 dark:text-white ">
+                <Logo size={40} />
+                <h2 className="mb-8 text-2xl font-bold">
                   Ready to Dive In? <br /> Let's Get Started!
                 </h2>
               </div>
               <div className="mt-10 grid space-y-4">
-                <button className="group h-12 px-6 border-2 border-gray-300 rounded-full transition duration-300 hover:border-blue-400 focus:bg-blue-50 active:bg-blue-100">
+                <button
+                  type="button"
+                  className="group h-12 px-6 border-2 border-gray-300 rounded-full transition duration-300 hover:border-blue-400 focus:bg-blue-50 active:bg-blue-100"
+                  onClick={handleSignInBtn}
+                >
                   <div className="relative flex items-center space-x-4 justify-center">
                     <Image
                       src="https://www.svgrepo.com/show/475656/google-color.svg"
