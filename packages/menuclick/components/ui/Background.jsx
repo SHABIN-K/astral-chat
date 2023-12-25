@@ -1,6 +1,11 @@
+import ThemeSwitcher from "../ThemeSwitcher";
+
 const Background = () => {
   return (
     <>
+      <div className="absolute right-0 top-10 mr-10">
+        <ThemeSwitcher />
+      </div>
       <svg
         className="absolute pointer-events-none inset-0 h-full w-full stroke-gray-500 dark:stroke-gray-200 opacity-50 [mask-image:radial-gradient(100%_100%_at_top_center,white,transparent)]"
         aria-hidden

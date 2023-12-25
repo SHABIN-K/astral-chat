@@ -23,9 +23,9 @@ export default function Home() {
   return (
     <div className="flex flex-col items-center justify-center space-y-10 ">
       <Background />
-      <div className="absolute right-0 top-0 mr-10">
+      {/* <div className="absolute right-0 top-0 mr-10">
         <ThemeSwitcher />
-      </div>
+  </div> */}
 
       <div>
         <div className="flex flex-col items-center space-y-6 mt-20">
