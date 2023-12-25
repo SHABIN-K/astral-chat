@@ -17,7 +17,6 @@ const Authentication = () => {
       router.push("/");
     } else {
       signIn("google");
-      router.push("/dashboard");
     }
   };
   return (

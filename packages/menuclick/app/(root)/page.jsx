@@ -16,13 +16,12 @@ export default function Home() {
       router.push("/");
     } else {
       signIn("google");
-      router.push("/dashboard");
     }
   };
 
   return (
     <div className="flex flex-col items-center justify-center space-y-10 ">
-      <Background size={0}/>
+      <Background size={0} />
       {/* <div className="absolute right-0 top-0 mr-10">
         <ThemeSwitcher />
   </div> */}
