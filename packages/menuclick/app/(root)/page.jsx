@@ -2,7 +2,7 @@
 
 import Footer from "@/components/web/Footer";
 import Background from "@/components/ui/Background";
-import ThemeSwitcher from "@/components/ThemeSwitcher";
+import ThemeSwitcher from "@/components/ui/ThemeSwitcher";
 
 import { useRouter } from "next/navigation";
 import { signIn, useSession } from "next-auth/react";
