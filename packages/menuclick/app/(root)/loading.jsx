@@ -1,10 +1,9 @@
-
-'use client'
+"use client";
 import { useTheme } from "next-themes";
 import { PuffLoader } from "react-spinners";
 
 export default function Loading() {
-    const { theme } = useTheme();
+  const { theme } = useTheme();
   return (
     <div className="flex justify-center items-center h-[100vh] ">
       <PuffLoader

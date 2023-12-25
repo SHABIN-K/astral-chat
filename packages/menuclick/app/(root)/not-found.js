@@ -1,7 +1,34 @@
+import Background from "@/components/ui/Background";
+import { background } from "@/public/assets";
+import Image from "next/image";
+import Link from "next/link";
+
+/* eslint-disable react/no-unescaped-entities */
 export default function NotFound() {
   return (
-    <div className="lg:px-24 lg:py-24 md:py-20 md:px-44 px-4 py-24 items-center flex justify-center flex-col-reverse lg:flex-row md:gap-28 gap-16">
-      not f0und
+    <div className="grid h-screen place-content-center bg-color px-4">
+      <Background />
+      <div className="text-center">
+        <h1 className="text-9xl font-black text-color">404</h1>
+
+        <p className="text-2xl font-bold tracking-tight text-color sm:text-4xl">
+          Uh-oh!
+        </p>
+
+        <p className="mt-4 text-gray-500 dark:text-gray-400">
+          We can't find that page.
+        </p>
+
+        <Link
+          href="/"
+          className="w-[180px] bg-black dark:bg-white rounded-lg  py-[10px] px-4 
+          hover:shadow-lg hover:scale-105 transition duration-500 mt-6 inline-block"
+        >
+          <span className="text-white dark:text-black font-semibold text-lg ">
+            Go Back Home
+          </span>
+        </Link>
+      </div>
     </div>
   );
 }
