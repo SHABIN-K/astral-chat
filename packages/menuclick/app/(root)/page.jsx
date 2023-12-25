@@ -2,22 +2,14 @@
 
 import Footer from "@/components/web/Footer";
 import Background from "@/components/ui/Background";
-import ThemeSwitcher from "@/components/ui/ThemeSwitcher";
+//import ThemeSwitcher from "@/components/ui/ThemeSwitcher";
 
 import { useRouter } from "next/navigation";
-import { signIn, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 
 export default function Home() {
   const router = useRouter();
   const { data: session } = useSession();
-  const handleSignInBtn = () => {
-    if (session) {
-      alert("already logged in");
-      router.push("/");
-    } else {
-      signIn("google");
-    }
-  };
 
   return (
     <div className="flex flex-col items-center justify-center space-y-10 ">
@@ -39,10 +31,10 @@ export default function Home() {
             type="button"
             className="w-[180px] bg-black dark:bg-white rounded-lg  py-[10px] px-4 
       hover:shadow-lg hover:scale-105 transition duration-500"
-            onClick={handleSignInBtn}
+            onClick={() => router.push("/dashboard")}
           >
             <span className="text-white dark:text-black font-semibold text-lg ">
-              Get Started
+              {session ? "Go to Dashboard" : "Get Started"}
             </span>
           </button>
         </div>

@@ -2,29 +2,18 @@
 "use client";
 import Link from "next/link";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { signIn, useSession } from "next-auth/react";
+import { signIn } from "next-auth/react";
 
-import Background from "@/components/ui/Background";
 import { Logo } from "@/public/assets";
+import Background from "@/components/ui/Background";
 
 const Authentication = () => {
-  const router = useRouter();
-  const { data: session } = useSession();
-  const handleSignInBtn = () => {
-    if (session) {
-      alert("already logged in");
-      router.push("/");
-    } else {
-      signIn("google");
-    }
-  };
   return (
     <div className="fixed grid place-items-center top-0 right-0 left-0 z-50 w-full inset-0 h-full justify-center items-center">
-      <Background size={10}/>
+      <Background size={10} />
       <div className="relative container m-auto px-6">
         <div className="m-auto md:w-7/12">
-          <div className="rounded-xl bg-white dark:bg-black shadow-xl shadow-[#3a31316f]">
+          <div className="rounded-xl bg-white dark:bg-black shadow-xl shadow-[#6e63636f]">
             <div className="p-8">
               <div className="space-y-4 text-gray-900 dark:text-white ">
                 <Logo size={40} />
@@ -36,7 +25,9 @@ const Authentication = () => {
                 <button
                   type="button"
                   className="group h-12 px-6 border-2 border-gray-300 rounded-full transition duration-300 hover:border-blue-400 focus:bg-blue-50 active:bg-blue-100"
-                  onClick={handleSignInBtn}
+                  onClick={() =>
+                    signIn("google", { callbackUrl: "/dashboard" })
+                  }
                 >
                   <div className="relative flex items-center space-x-4 justify-center">
                     <Image
