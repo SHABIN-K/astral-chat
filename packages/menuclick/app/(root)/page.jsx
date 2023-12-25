@@ -9,13 +9,13 @@ import { signIn, useSession } from "next-auth/react";
 export default function Home() {
   const router = useRouter();
   const { data: session } = useSession();
-  
   const handleSignInBtn = () => {
     if (session) {
       alert("already logged in");
       router.push("/");
     } else {
       signIn("google");
+      router.push("/dashboard");
     }
   };
 
@@ -62,6 +62,7 @@ export default function Home() {
       <div className="absolute right-0 top-0 mr-10">
         <ThemeSwitcher />
       </div>
+
       <div>
         <div className="flex flex-col items-center space-y-6 mt-20">
           <h1 className="max-w-3xl text-center font-bold text-gray-900 dark:text-white text-5xl leading-tight">

@@ -2,3 +2,21 @@
 @tailwind components;
 @tailwind utilities;
 
+/*color*/
+.text-color {
+  @apply text-gray-900 dark:text-white;
+}
+
+.bg-color {
+  @apply text-gray-900 dark:bg-white;
+}
+
+.bg-btncolor {
+  @apply text-gray-900 dark:bg-white;
+}
+
+.text-btncolor {
+  @apply text-white dark:text-gray-900;
+}
+
+/*color*/
