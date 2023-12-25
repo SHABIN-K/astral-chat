@@ -1,8 +1,24 @@
+"use client";
 
 import Footer from "@/components/web/Footer";
 import ThemeSwitcher from "@/components/ThemeSwitcher";
 
+import { useRouter } from "next/navigation";
+import { signIn, useSession } from "next-auth/react";
+
 export default function Home() {
+  const router = useRouter();
+  const { data: session } = useSession();
+  
+  const handleSignInBtn = () => {
+    if (session) {
+      alert("already logged in");
+      router.push("/");
+    } else {
+      signIn("google");
+    }
+  };
+
   return (
     <div className="flex flex-col items-center justify-center space-y-10 ">
       <svg
@@ -56,11 +72,13 @@ export default function Home() {
             Create, update, and easily manage your restaurant menu online.
           </p>
           <button
+            type="button"
             className="w-[180px] bg-black dark:bg-white rounded-lg  py-[10px] px-4 
       hover:shadow-lg hover:scale-105 transition duration-500"
+            onClick={handleSignInBtn}
           >
             <span className="text-white dark:text-black font-semibold text-lg ">
-              Comming Soon !
+              Get Started
             </span>
           </button>
         </div>
