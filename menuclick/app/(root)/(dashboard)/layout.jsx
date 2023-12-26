@@ -1,5 +1,5 @@
 import Header from "@/components/Header";
-import { ProtectedAdminLayout } from "@/modules/layouts";
+import { ProtectedAdminLayout } from "@/modules/layouts/ProctectAdminlayout";
 
 export const metadata = {
   title: "Dashboard | MenuClick",
@@ -8,9 +8,11 @@ export const metadata = {
 
 export default function DashboardLayout({ children }) {
   return (
-    <div className="flex-center flex-col">
-      <Header />
-      <main className="flex-center grow p-5 md:p-4">{children}</main>
-    </div>
+    <ProtectedAdminLayout>
+      <div className="flex-center flex-col">
+        <Header />
+        <main className="flex-center grow p-5 md:p-4">{children}</main>
+      </div>
+    </ProtectedAdminLayout>
   );
 }

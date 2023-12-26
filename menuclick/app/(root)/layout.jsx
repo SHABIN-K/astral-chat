@@ -16,7 +16,7 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body className={`${inter.className} bg-color`}>
         <AuthProvider>
-          <Toaster />
+          <Toaster position="bottom-right" closeButton richColors />
           <ColorProvider>{children}</ColorProvider>
         </AuthProvider>
       </body>

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Menu, Transition } from "@headlessui/react";
 import { Sling as Hamburger } from "hamburger-react";
 import { Fragment, useState, useEffect, useRef } from "react";
@@ -11,15 +11,17 @@ import { ThemeSwitcher } from "./ui";
 import { ConfirmModal } from "./modal";
 import { Avathar, Logo } from "@/public/assets";
 import { navItems, navlinks } from "@/utils/constants";
+import { handleSignOutButton } from "@/utils/tools/useSignOut";
 
 const Header = () => {
+  const router = useRouter();
   const pathname = usePathname();
 
   const menuRef = useRef(null);
   const buttonRef = useRef(null);
   const [open, setOpen] = useState(null);
 
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -41,10 +43,6 @@ const Header = () => {
     };
   }, [menuRef, buttonRef]);
 
-  const handleConfirmBtn = () => {
-    console.log("sign out");
-    setIsLoading(true);
-  };
   return (
     <nav className="bg-color border-b-2 border-color rounded-b-lg w-full">
       <div className="mx-auto  px-2 sm:px-6 lg:px-8">
@@ -104,15 +102,19 @@ const Header = () => {
                   {navItems.map((item) => (
                     <Menu.Item key={item.id}>
                       {({ active }) => (
-                        <Link
-                          href={item.link}
+                        <div
+                          onClick={() => {
+                            item.link === null
+                              ? setIsOpen(true)
+                              : router.push(item.link);
+                          }}
                           className={`
                       ${active ? "bg-gray-100" : ""}
                       block px-4 py-2 text-sm text-gray-700
                     `}
                         >
                           {item.name}
-                        </Link>
+                        </div>
                       )}
                     </Menu.Item>
                   ))}
@@ -151,7 +153,7 @@ const Header = () => {
         setIsOpen={setIsOpen}
         title="Sign out"
         btnLabel="Sign out"
-        handleConfirmBtn={handleConfirmBtn}
+        handleConfirmBtn={() => handleSignOutButton(setIsLoading, setIsOpen)}
         isLoading={isLoading}
       />
     </nav>
