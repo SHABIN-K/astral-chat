@@ -1,6 +1,6 @@
-import { Logo } from "@/public/assets";
-import Link from "next/link";
 import React from "react";
+import Link from "next/link";
+import { Logo } from "@/public/assets";
 import { FaInstagram, FaTwitter, FaGithub, FaTelegram } from "react-icons/fa";
 
 const Footer = () => {

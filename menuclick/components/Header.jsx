@@ -7,7 +7,7 @@ import { Menu, Transition } from "@headlessui/react";
 import { Sling as Hamburger } from "hamburger-react";
 import { Fragment, useState, useEffect, useRef } from "react";
 
-import ThemeSwitcher from "./ui/ThemeSwitcher";
+import { ThemeSwitcher } from "./ui";
 import { Avathar, Logo } from "@/public/assets";
 import { navItems, navlinks } from "@/utils/constants";
 
@@ -47,9 +47,9 @@ const Header = () => {
             <Hamburger toggled={isOpen} toggle={setOpen} rounded />
           </div>
           <div className="flex-center flex-1 sm:justify-start">
-            <div className="flex flex-shrink-0 items-center">
+            <Link href="/" className="flex flex-shrink-0 items-center">
               <Logo size={40} />
-            </div>
+            </Link>
             <div className="hidden sm:ml-10 sm:block">
               <div className="flex space-x-4">
                 {navlinks.map((item, index) => (

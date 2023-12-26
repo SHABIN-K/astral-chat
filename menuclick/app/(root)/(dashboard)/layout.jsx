@@ -1,5 +1,5 @@
 import Header from "@/components/Header";
-import { ProtectedAdminLayout } from "@/modules/layouts/ProctectAdminlayout";
+import { ProtectedAdminLayout } from "@/modules/layouts";
 
 export const metadata = {
   title: "Dashboard| MenuClick",

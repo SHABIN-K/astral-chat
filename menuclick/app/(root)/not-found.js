@@ -1,5 +1,5 @@
 import Link from "next/link";
-import Background from "@/components/ui/Background";
+import { Background } from "@/components/ui";
 
 /* eslint-disable react/no-unescaped-entities */
 export default function NotFound() {
