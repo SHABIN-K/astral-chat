@@ -53,7 +53,6 @@ function Example() {
     <Disclosure as="nav" className="bg-gray-800">
       {({ open }) => (
         <>
-
           <Disclosure.Panel className="sm:hidden">
             <div className="space-y-1 px-2 pb-3 pt-2">
               {navigation.map((item) => (

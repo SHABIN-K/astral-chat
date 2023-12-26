@@ -5,25 +5,22 @@ import Image from "next/image";
 import { Fragment, useState } from "react";
 import { usePathname } from "next/navigation";
 import { Menu, Transition } from "@headlessui/react";
+import { Sling as Hamburger } from "hamburger-react";
 
-import Hamburger from "./ui/Hamburger";
 import { Avathar, Logo } from "@/public/assets";
 import { navItems, navlinks } from "@/utils/constants";
 import ThemeSwitcher from "./ui/ThemeSwitcher";
 
 const Header = () => {
   const pathname = usePathname();
-  const [isActive, setIsActive] = useState(false);
-  console.log(isActive);
+  const [isOpen, setOpen] = useState(null);
+  console.log(isOpen);
   return (
     <nav className="bg-color border-b-2 border-color rounded-b-lg">
       <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
         <div className="relative flex h-16 items-center justify-between">
-          <div
-            className="absolute inset-y-0 left-0 flex items-center sm:hidden"
-            onClick={() => setIsActive((prevIsActive) => !prevIsActive)}
-          >
-            <Hamburger />
+          <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
+            <Hamburger toggled={isOpen} toggle={setOpen} rounded />
           </div>
           <div className="flex-center flex-1 sm:justify-start">
             <div className="flex flex-shrink-0 items-center">
@@ -93,7 +90,7 @@ const Header = () => {
         </div>
       </div>
 
-      {isActive && (
+      {isOpen && (
         <div className="sm:hidden">
           <div className="space-y-1 px-2 pb-3 pt-2">
             {navlinks.map((item, index) => (
@@ -103,7 +100,7 @@ const Header = () => {
                 className={`rounded-lg px-5 py-2 ${
                   pathname === item.link && "border-2 border-color"
                 } `}
-                onClick={() => setIsActive(false)}
+                onClick={() => setOpen(false)}
               >
                 <span className="text-color text-md font-medium">
                   {item.name}
