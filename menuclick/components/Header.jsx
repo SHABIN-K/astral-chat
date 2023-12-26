@@ -7,7 +7,7 @@ import { Menu, Transition } from "@headlessui/react";
 import { Sling as Hamburger } from "hamburger-react";
 import { Fragment, useState, useEffect, useRef } from "react";
 
-import ThemeSwitcher from "./ui/ThemeSwitcher";
+import { ThemeSwitcher } from "./ui";
 import { Avathar, Logo } from "@/public/assets";
 import { navItems, navlinks } from "@/utils/constants";
 
@@ -47,9 +47,9 @@ const Header = () => {
             <Hamburger toggled={isOpen} toggle={setOpen} rounded />
           </div>
           <div className="flex-center flex-1 sm:justify-start">
-            <div className="flex flex-shrink-0 items-center">
+            <Link href="/" className="flex flex-shrink-0 items-center">
               <Logo size={40} />
-            </div>
+            </Link>
             <div className="hidden sm:ml-10 sm:block">
               <div className="flex space-x-4">
                 {navlinks.map((item, index) => (
@@ -114,29 +114,29 @@ const Header = () => {
         </div>
       </div>
 
-      {isOpen && (
-        <div
-          className="absolute sm:hidden mt-2 bg-color w-full border border-color flex-center rounded-lg p-2 backdrop-blur-sm"
-          ref={menuRef}
-        >
-          <div className="space-y-1 px-2 pb-3 pt-2 flex flex-col w-full">
-            {navlinks.map((item, index) => (
-              <Link
-                key={index}
-                href={item.link}
-                className={`rounded-lg px-5 py-2 ${
-                  pathname === item.link
-                    ? "bg-btncolor text-btncolor"
-                    : "text-color"
-                }`}
-                onClick={() => setOpen(false)}
-              >
-                <span className="text-md font-medium">{item.name}</span>
-              </Link>
-            ))}
-          </div>
+      <div
+        className={`top-0 absolute sm:hidden bg-color w-full border border-color flex-center rounded-lg p-2 backdrop-blur-sm shadow-xl  z-10 transition-transform duration-1000 ${
+          isOpen ? "translate-y-20" : "-translate-y-full"
+        }`}
+        ref={menuRef}
+      >
+        <div className="space-y-1 px-2 pb-3 pt-2 flex flex-col w-full">
+          {navlinks.map((item, index) => (
+            <Link
+              key={index}
+              href={item.link}
+              className={`rounded-lg px-5 py-2 ${
+                pathname === item.link
+                  ? "bg-btncolor text-btncolor"
+                  : "text-color"
+              }`}
+              onClick={() => setOpen(false)}
+            >
+              <span className="text-md font-medium">{item.name}</span>
+            </Link>
+          ))}
         </div>
-      )}
+      </div>
     </nav>
   );
 };

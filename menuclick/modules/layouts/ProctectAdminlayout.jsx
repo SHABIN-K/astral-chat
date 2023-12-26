@@ -3,8 +3,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-
-import Loader from "@/components/ui/Loader";
+import { Loader } from "@/components/ui";
 
 export const ProtectedAdminLayout = ({ children }) => {
   const router = useRouter();

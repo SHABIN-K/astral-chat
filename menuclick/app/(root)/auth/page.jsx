@@ -1,11 +1,12 @@
 /* eslint-disable react/no-unescaped-entities */
 "use client";
+
 import Link from "next/link";
 import Image from "next/image";
 import { signIn } from "next-auth/react";
 
 import { Logo } from "@/public/assets";
-import Background from "@/components/ui/Background";
+import { Background } from "@/components/ui";
 
 const Authentication = () => {
   return (

@@ -2,8 +2,7 @@ import { Toaster } from "sonner";
 import { Inter } from "next/font/google";
 
 import "../globals.css";
-import AuthProvider from "@/modules/providers/AuthProvider";
-import ColorProvider from "@/modules/providers/ColorProvider";
+import { AuthProvider, ColorProvider } from "@/modules/providers";
 
 const inter = Inter({ subsets: ["latin"] });
 
