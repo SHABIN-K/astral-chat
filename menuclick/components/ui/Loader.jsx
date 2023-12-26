@@ -1,7 +1,7 @@
 "use client";
 
 import { useTheme } from "next-themes";
-import { PuffLoader } from "react-spinners";
+import { PuffLoader, ClipLoader } from "react-spinners";
 
 const Loader = () => {
   const { theme } = useTheme();
@@ -16,3 +16,9 @@ const Loader = () => {
 };
 
 export default Loader;
+
+const WaitingLoader = ({ size, color }) => {
+  return <ClipLoader size={size} color={color} />;
+};
+
+export { WaitingLoader };

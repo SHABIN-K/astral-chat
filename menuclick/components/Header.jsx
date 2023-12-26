@@ -2,20 +2,27 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Menu, Transition } from "@headlessui/react";
 import { Sling as Hamburger } from "hamburger-react";
 import { Fragment, useState, useEffect, useRef } from "react";
 
 import { ThemeSwitcher } from "./ui";
+import { ConfirmModal } from "./modal";
 import { Avathar, Logo } from "@/public/assets";
 import { navItems, navlinks } from "@/utils/constants";
+import { handleSignOutButton } from "@/utils/tools/useSignOut";
 
 const Header = () => {
+  const router = useRouter();
+  const pathname = usePathname();
+
   const menuRef = useRef(null);
   const buttonRef = useRef(null);
-  const pathname = usePathname();
-  const [isOpen, setOpen] = useState(null);
+  const [open, setOpen] = useState(null);
+
+  const [isOpen, setIsOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const handleOutsideClick = (event) => {
@@ -44,7 +51,7 @@ const Header = () => {
             className="absolute inset-y-0 left-0 flex items-center sm:hidden"
             ref={buttonRef}
           >
-            <Hamburger toggled={isOpen} toggle={setOpen} rounded />
+            <Hamburger toggled={open} toggle={setOpen} rounded />
           </div>
           <div className="flex-center flex-1 sm:justify-start">
             <Link href="/" className="flex flex-shrink-0 items-center">
@@ -95,15 +102,19 @@ const Header = () => {
                   {navItems.map((item) => (
                     <Menu.Item key={item.id}>
                       {({ active }) => (
-                        <Link
-                          href={item.link}
+                        <div
+                          onClick={() => {
+                            item.link === null
+                              ? setIsOpen(true)
+                              : router.push(item.link);
+                          }}
                           className={`
                       ${active ? "bg-gray-100" : ""}
                       block px-4 py-2 text-sm text-gray-700
                     `}
                         >
                           {item.name}
-                        </Link>
+                        </div>
                       )}
                     </Menu.Item>
                   ))}
@@ -116,7 +127,7 @@ const Header = () => {
 
       <div
         className={`top-0 absolute sm:hidden bg-color w-full border border-color flex-center rounded-lg p-2 backdrop-blur-sm shadow-xl  z-10 transition-transform duration-1000 ${
-          isOpen ? "translate-y-20" : "-translate-y-full"
+          open ? "translate-y-20" : "-translate-y-full"
         }`}
         ref={menuRef}
       >
@@ -137,6 +148,14 @@ const Header = () => {
           ))}
         </div>
       </div>
+      <ConfirmModal
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        title="Sign out"
+        btnLabel="Sign out"
+        handleConfirmBtn={() => handleSignOutButton(setIsLoading, setIsOpen)}
+        isLoading={isLoading}
+      />
     </nav>
   );
 };
