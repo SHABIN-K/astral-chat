@@ -18,7 +18,7 @@
 
 /*color*/
 .text-color {
-  @apply text-gray-900 dark:text-white;
+  @apply text-black dark:text-white;
 }
 
 .bg-color {
@@ -26,11 +26,11 @@
 }
 
 .text-btncolor {
-  @apply text-white dark:text-gray-900;
+  @apply text-white dark:text-black;
 }
 
 .bg-btncolor {
-  @apply text-gray-900 dark:bg-white;
+  @apply bg-black dark:bg-white;
 }
 
 .border-color {

@@ -2,24 +2,49 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { Fragment } from "react";
 import { usePathname } from "next/navigation";
-import { Disclosure, Menu, Transition } from "@headlessui/react";
+import { Menu, Transition } from "@headlessui/react";
+import { Sling as Hamburger } from "hamburger-react";
+import { Fragment, useState, useEffect, useRef } from "react";
 
-import Hamburger from "./ui/Hamburger";
+import ThemeSwitcher from "./ui/ThemeSwitcher";
 import { Avathar, Logo } from "@/public/assets";
 import { navItems, navlinks } from "@/utils/constants";
-import ThemeSwitcher from "./ui/ThemeSwitcher";
 
 const Header = () => {
+  const menuRef = useRef(null);
+  const buttonRef = useRef(null);
   const pathname = usePathname();
+  const [isOpen, setOpen] = useState(null);
+
+  useEffect(() => {
+    const handleOutsideClick = (event) => {
+      if (
+        menuRef.current &&
+        !menuRef.current.contains(event.target) &&
+        buttonRef.current &&
+        !buttonRef.current.contains(event.target)
+      ) {
+        setOpen(false);
+      }
+    };
+
+    document.addEventListener("click", handleOutsideClick);
+
+    return () => {
+      document.removeEventListener("click", handleOutsideClick);
+    };
+  }, [menuRef, buttonRef]);
 
   return (
-    <nav className="bg-color border-b-2 border-color rounded-b-lg">
-      <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
+    <nav className="bg-color border-b-2 border-color rounded-b-lg w-full">
+      <div className="mx-auto  px-2 sm:px-6 lg:px-8">
         <div className="relative flex h-16 items-center justify-between">
-          <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
-            <Hamburger />
+          <div
+            className="absolute inset-y-0 left-0 flex items-center sm:hidden"
+            ref={buttonRef}
+          >
+            <Hamburger toggled={isOpen} toggle={setOpen} rounded />
           </div>
           <div className="flex-center flex-1 sm:justify-start">
             <div className="flex flex-shrink-0 items-center">
@@ -88,6 +113,30 @@ const Header = () => {
           </div>
         </div>
       </div>
+
+      {isOpen && (
+        <div
+          className="absolute sm:hidden mt-2 bg-color w-full border border-color flex-center rounded-lg p-2 backdrop-blur-sm"
+          ref={menuRef}
+        >
+          <div className="space-y-1 px-2 pb-3 pt-2 flex flex-col w-full">
+            {navlinks.map((item, index) => (
+              <Link
+                key={index}
+                href={item.link}
+                className={`rounded-lg px-5 py-2 ${
+                  pathname === item.link
+                    ? "bg-btncolor text-btncolor"
+                    : "text-color"
+                }`}
+                onClick={() => setOpen(false)}
+              >
+                <span className="text-md font-medium">{item.name}</span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
     </nav>
   );
 };
