@@ -3,7 +3,7 @@ import Image from "next/image";
 export const Empty = ({ label, error, reset }) => {
   return (
     <section>
-      <div className="p-20 flex flex-col items-center justify-center">
+      <div className="p-20 flex-col flex-center">
         <div className="relative mb-3">
           <Image
             src="/empty.png"

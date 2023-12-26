@@ -6,7 +6,7 @@ import { PuffLoader } from "react-spinners";
 const Loader = () => {
   const { theme } = useTheme();
   return (
-    <div className="flex justify-center items-center h-[100vh] ">
+    <div className="flex-center h-[100vh] ">
       <PuffLoader
         size={65}
         color={`${theme == "dark" ? "#ffffff" : "#000000"}`}

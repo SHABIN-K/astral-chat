@@ -29,7 +29,7 @@ const Authentication = () => {
                     signIn("google", { callbackUrl: "/dashboard" })
                   }
                 >
-                  <div className="relative flex items-center space-x-4 justify-center">
+                  <div className="relative space-x-4 flex-center">
                     <Image
                       src="https://www.svgrepo.com/show/475656/google-color.svg"
                       className="absolute left-0 w-5"
@@ -50,14 +50,14 @@ const Authentication = () => {
                     href="/term-policy"
                     className="underline hover:text-blue-600"
                   >
-                    Terms of Use
+                    Terms of Service
                   </Link>
                   and confirm you have read our
                   <Link
                     href="/privacy-policy"
                     className="underline hover:text-blue-600"
                   >
-                    Privacy and Cookie Statement
+                    Privacy Policy
                   </Link>
                   .
                 </p>
