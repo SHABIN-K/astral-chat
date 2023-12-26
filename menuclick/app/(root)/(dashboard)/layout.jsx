@@ -1,3 +1,4 @@
+import Header from "@/components/Header";
 import { ProtectedAdminLayout } from "@/modules/layouts/ProctectAdminlayout";
 
 export const metadata = {
@@ -6,5 +7,10 @@ export const metadata = {
 };
 
 export default function DashboardLayout({ children }) {
-  return <ProtectedAdminLayout>{children}</ProtectedAdminLayout>;
+  return (
+    <ProtectedAdminLayout>
+      <Header />
+      <main className="flex-center">{children}</main>
+    </ProtectedAdminLayout>
+  );
 }

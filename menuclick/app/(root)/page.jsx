@@ -12,7 +12,7 @@ export default function Home() {
   const { data: session } = useSession();
 
   return (
-    <div className="flex flex-col items-center justify-center space-y-10 ">
+    <div className="flex-col space-y-10 flex-center">
       <Background size={0} />
       {/* <div className="absolute right-0 top-0 mr-10">
         <ThemeSwitcher />
