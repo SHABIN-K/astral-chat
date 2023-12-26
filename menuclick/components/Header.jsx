@@ -8,14 +8,19 @@ import { Sling as Hamburger } from "hamburger-react";
 import { Fragment, useState, useEffect, useRef } from "react";
 
 import { ThemeSwitcher } from "./ui";
+import { ConfirmModal } from "./modal";
 import { Avathar, Logo } from "@/public/assets";
 import { navItems, navlinks } from "@/utils/constants";
 
 const Header = () => {
+  const pathname = usePathname();
+
   const menuRef = useRef(null);
   const buttonRef = useRef(null);
-  const pathname = usePathname();
-  const [isOpen, setOpen] = useState(null);
+  const [open, setOpen] = useState(null);
+
+  const [isOpen, setIsOpen] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const handleOutsideClick = (event) => {
@@ -36,6 +41,10 @@ const Header = () => {
     };
   }, [menuRef, buttonRef]);
 
+  const handleConfirmBtn = () => {
+    console.log("sign out");
+    setIsLoading(true);
+  };
   return (
     <nav className="bg-color border-b-2 border-color rounded-b-lg w-full">
       <div className="mx-auto  px-2 sm:px-6 lg:px-8">
@@ -44,7 +53,7 @@ const Header = () => {
             className="absolute inset-y-0 left-0 flex items-center sm:hidden"
             ref={buttonRef}
           >
-            <Hamburger toggled={isOpen} toggle={setOpen} rounded />
+            <Hamburger toggled={open} toggle={setOpen} rounded />
           </div>
           <div className="flex-center flex-1 sm:justify-start">
             <Link href="/" className="flex flex-shrink-0 items-center">
@@ -116,7 +125,7 @@ const Header = () => {
 
       <div
         className={`top-0 absolute sm:hidden bg-color w-full border border-color flex-center rounded-lg p-2 backdrop-blur-sm shadow-xl  z-10 transition-transform duration-1000 ${
-          isOpen ? "translate-y-20" : "-translate-y-full"
+          open ? "translate-y-20" : "-translate-y-full"
         }`}
         ref={menuRef}
       >
@@ -137,6 +146,14 @@ const Header = () => {
           ))}
         </div>
       </div>
+      <ConfirmModal
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        title="Sign out"
+        btnLabel="Sign out"
+        handleConfirmBtn={handleConfirmBtn}
+        isLoading={isLoading}
+      />
     </nav>
   );
 };
