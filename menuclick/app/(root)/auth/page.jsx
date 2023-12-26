@@ -50,14 +50,14 @@ const Authentication = () => {
                     href="/term-policy"
                     className="underline hover:text-blue-600"
                   >
-                    Terms of Use
+                    Terms of Service
                   </Link>
                   and confirm you have read our
                   <Link
                     href="/privacy-policy"
                     className="underline hover:text-blue-600"
                   >
-                    Privacy and Cookie Statement
+                    Privacy Policy
                   </Link>
                   .
                 </p>

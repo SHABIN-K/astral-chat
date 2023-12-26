@@ -33,6 +33,9 @@
   @apply text-gray-900 dark:bg-white;
 }
 
+.border-color {
+  @apply border-black dark:border-white;
+}
 /*color*/
 
 .flex-center {
