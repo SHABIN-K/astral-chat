@@ -44,9 +44,9 @@ const Authentication = () => {
                   </div>
                 </button>
               </div>
-              <div className="mt-14 space-y-4 py-3 text-gray-600 dark:text-gray-300 text-center ">
+              <div className="mt-14 space-y-4 py-3 text-gray-600 dark:text-gray-300 text-center w-full">
                 <p className="text-xs">
-                  By proceeding, you agree to our
+                  By proceeding,you agree to our
                   <Link
                     href="/term-policy"
                     className="underline hover:text-blue-600"

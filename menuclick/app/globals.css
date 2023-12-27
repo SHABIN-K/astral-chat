@@ -41,3 +41,7 @@
 .flex-center {
   @apply flex items-center justify-center;
 }
+
+.flex-start {
+  @apply flex items-start justify-start;
+}
