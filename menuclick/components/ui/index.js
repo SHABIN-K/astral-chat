@@ -1,7 +1,7 @@
-import Loader, { WaitingLoader } from "./Loader";
 import { Empty } from "./Empty";
+import FormInput from "./FormInput";
 import Background from "./Background";
 import ThemeSwitcher from "./ThemeSwitcher";
+import Loader, { WaitingLoader } from "./Loader";
 
-
-export { Background, Empty, Loader, ThemeSwitcher, WaitingLoader };
+export { Background, Empty, Loader, ThemeSwitcher, WaitingLoader, FormInput };
