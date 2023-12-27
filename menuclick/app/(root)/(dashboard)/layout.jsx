@@ -9,9 +9,11 @@ export const metadata = {
 export default function DashboardLayout({ children }) {
   return (
     <ProtectedAdminLayout>
-      <div className="flex-center flex-col">
+      <div className="flex flex-col h-screen">
         <Header />
-        <main className="flex-center grow p-5 md:p-4">{children}</main>
+        <main className="grow p-4 md:p-4 overflow-y-auto">
+          {children}
+        </main>
       </div>
     </ProtectedAdminLayout>
   );

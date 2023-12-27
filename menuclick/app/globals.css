@@ -34,10 +34,18 @@
 }
 
 .border-color {
-  @apply border-black dark:border-white;
+  @apply border-gray-600 dark:border-slate-800;
 }
 /*color*/
 
 .flex-center {
   @apply flex items-center justify-center;
+}
+
+.flex-start {
+  @apply flex items-start justify-start;
+}
+
+.animation-div {
+  @apply hover:scale-105 transition duration-500;
 }

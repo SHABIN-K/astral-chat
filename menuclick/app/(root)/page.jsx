@@ -28,7 +28,7 @@ export default function Home() {
       hover:shadow-lg hover:scale-105 transition duration-500"
             onClick={() => router.push("/dashboard")}
           >
-            <span className="text-white dark:text-black font-semibold text-lg ">
+            <span className="text-white dark:text-black font-semibold text-lg">
               {session ? "Go to Dashboard" : "Get Started"}
             </span>
           </button>
