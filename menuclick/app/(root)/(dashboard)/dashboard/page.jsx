@@ -82,7 +82,7 @@ const DashBoard = () => {
         setIsOpen={setIsOpen}
         title="Add Shop"
         btnLabel="Sign out"
-        handleConfirmBtn={handleCreate}
+        handleBtn={handleCreate}
         isLoading={isLoading}
       />
     </div>
