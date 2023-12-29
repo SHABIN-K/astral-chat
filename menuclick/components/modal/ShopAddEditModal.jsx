@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { XMarkIcon } from "@heroicons/react/24/solid";
 import { Dialog, Transition } from "@headlessui/react";
 
@@ -13,8 +13,27 @@ const ShopAddEditModal = ({
   btnLabel,
   handleBtn,
   isLoading,
+  data,
   setData,
 }) => {
+  const [formData, setFormData] = useState({
+    name: "",
+    about: "",
+    email: "",
+    phonenumber: "",
+    location: "",
+    ...data,
+  });
+
+  useEffect(() => {
+    setData(formData);
+  }, [setData, formData]);
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({ ...prevData, [name]: value }));
+  };
+
   function closeModal() {
     setIsOpen(false);
   }
@@ -47,10 +66,7 @@ const ShopAddEditModal = ({
             >
               <Dialog.Panel className="w-full max-w-sm transform rounded-2xl bg-white dark:bg-gray-800 py-2 transition-all cursor-default pointer-events-auto mx-auto relative shadow-xl">
                 <div className="absolute top-2 right-2 rtl:right-auto rtl:left-2 ">
-                  <XMarkIcon
-                    className="text-color rounded-full p-1 hover:bg-gray-50 dark:hover:bg-gray-700 text-lg  cursor-pointer w-6 "
-                    onClick={closeModal}
-                  />
+                  <XMarkIcon className="icon" onClick={closeModal} />
                 </div>
 
                 <div className="p-2 md:mx-3">
@@ -68,11 +84,51 @@ const ShopAddEditModal = ({
                         label="Name"
                         type="text"
                         name="name"
-                        value="xcvbxcbxcvxvcxcvxvc"
+                        value={formData.name}
                         placeholder="Enter your shop name"
-                        onChange=""
-                        classLabel="text-gray-600 text-sm font-medium"
-                        classInput="bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 dark:outline-none text-color text-sm rounded-lg block w-full p-1.5"
+                        onChange={handleInputChange}
+                        classLabel="label_form"
+                        classInput="input_form"
+                      />
+                      <>
+                        <label className="label_form">About</label>
+                        <textarea
+                          name="about"
+                          rows="2"
+                          className="input_form"
+                          placeholder="Write Shop description here"
+                          value={formData.about}
+                          onChange={handleInputChange}
+                        />
+                      </>
+                      <FormInput
+                        label="Email"
+                        type="email"
+                        name="email"
+                        value={formData.email}
+                        placeholder="Enter shop email"
+                        onChange={handleInputChange}
+                        classLabel="label_form"
+                        classInput="input_form"
+                      />
+                      <FormInput
+                        label="Contact Number"
+                        type="tel"
+                        name="phonenumber"
+                        value={formData.phonenumber}
+                        onChange={handleInputChange}
+                        classLabel="label_form"
+                        classInput="input_form"
+                      />
+                      <FormInput
+                        label="Location"
+                        type="text"
+                        name="location"
+                        value={formData.location}
+                        placeholder="No 43,Road name,city"
+                        onChange={handleInputChange}
+                        classLabel="label_form"
+                        classInput="input_form"
                       />
                     </div>
                   </div>
