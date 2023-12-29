@@ -18,11 +18,6 @@ const ShopModal = ({
     setIsOpen(false);
   }
 
-  const styleConfirmModel = {
-    btn: "inline-flex items-center justify-center py-1 gap-1 font-medium rounded-lg border transition-colors outline-none dark:focus:ring-offset-0 min-h-[2.25rem] px-4 text-sm",
-    btnLabel: "flex items-center gap-1",
-  };
-
   return (
     <Transition appear show={isOpen} as={Fragment}>
       <Dialog as="div" className="relative z-10" onClose={closeModal}>
@@ -68,29 +63,24 @@ const ShopModal = ({
                   </div>
                 </div>
 
-                <div className="px-6 py-2">
-                  <div className="grid gap-2 grid-cols-[repeat(auto-fit,minmax(0,1fr))]">
-                    <FormButtons />
-                    <button
-                      onClick={closeModal}
-                      className={`text-gray-800 dark:text-gray-200 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 border-gray-300 dark:border-gray-600 dark:hover:border-gray-500 dark:focus:bg-gray-800 ${styleConfirmModel.btn}`}
-                    >
-                      <span className={styleConfirmModel.btnLabel}>Cancel</span>
-                    </button>
-
-                    <button
-                      onClick={handleBtn}
-                      className={`text-white shadow focus:ring-white border-transparent bg-red-600 hover:bg-red-500 focus:bg-red-700 focus:ring-offset-red-700 ${styleConfirmModel.btn}`}
-                    >
-                      <span className={styleConfirmModel.btnLabel}>
-                        {isLoading ? (
-                          <WaitingLoader size={15} color="#fffff" />
-                        ) : (
-                          btnLabel
-                        )}
-                      </span>
-                    </button>
-                  </div>
+                <div className="flex justify-end items-end px-3 py-2">
+                  <FormButtons
+                    mainClass="flex space-x-2"
+                    primaryClass="btn_form"
+                    secondaryClass="btn_form"
+                    secondaryLabelClass="flex items-center"
+                    primaryLabelClass="flex items-center"
+                    primaryLabel={
+                      isLoading ? (
+                        <WaitingLoader size={15} color="#fffff" />
+                      ) : (
+                        btnLabel
+                      )
+                    }
+                    secondaryLabel="cancel"
+                    onPrimaryClick={handleBtn}
+                    onSecondaryClick={closeModal}
+                  />
                 </div>
               </Dialog.Panel>
             </Transition.Child>

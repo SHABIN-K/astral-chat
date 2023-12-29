@@ -3,12 +3,15 @@
 import { useRef, useEffect } from "react";
 
 const FormButtons = ({
+  mainClass,
+  primaryClass,
+  secondaryClass,
+  secondaryLabelClass,
+  primaryLabelClass,
   primaryLabel,
   secondaryLabel,
   onPrimaryClick,
   onSecondaryClick,
-  primaryClassName,
-  secondaryClassName,
 }) => {
   const primaryButtonRef = useRef();
 
@@ -25,23 +28,23 @@ const FormButtons = ({
   }, []);
 
   return (
-    <>
+    <div className={mainClass}>
       <button
         type="button"
-        className={secondaryClassName}
+        className={secondaryClass}
         onClick={onSecondaryClick}
       >
-        {secondaryLabel}
+        <span className={secondaryLabelClass}>{secondaryLabel}</span>
       </button>
       <button
-        ref={primaryButtonRef}
         type="button"
-        className={primaryClassName}
+        className={primaryClass}
         onClick={onPrimaryClick}
+        ref={primaryButtonRef}
       >
-        {primaryLabel}
+        <span className={primaryLabelClass}>{primaryLabel}</span>
       </button>
-    </>
+    </div>
   );
 };
 
