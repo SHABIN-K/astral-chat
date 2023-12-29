@@ -3,9 +3,9 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
-import { usePathname, useRouter } from "next/navigation";
 import { Menu, Transition } from "@headlessui/react";
 import { Sling as Hamburger } from "hamburger-react";
+import { usePathname, useRouter } from "next/navigation";
 import { Fragment, useState, useEffect, useRef } from "react";
 
 import { ThemeSwitcher } from "./ui";
