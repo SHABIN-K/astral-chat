@@ -51,10 +51,7 @@ const ConfirmModal = ({
             >
               <Dialog.Panel className="w-full max-w-sm transform rounded-2xl bg-white dark:bg-gray-800 py-2 transition-all cursor-default pointer-events-auto mx-auto relative shadow-xl">
                 <div className="absolute top-2 right-2 rtl:right-auto rtl:left-2 ">
-                  <XMarkIcon
-                    className="text-color rounded-full p-1 hover:bg-gray-50 dark:hover:bg-gray-700 text-lg  cursor-pointer w-6 "
-                    onClick={closeModal}
-                  />
+                  <XMarkIcon className="icon" onClick={closeModal} />
                 </div>
 
                 <div className="space-y-2 p-2">

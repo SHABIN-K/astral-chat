@@ -6,8 +6,7 @@ export const navlinks = [
 export const navItems = [
   { id: 1, name: "Your Profile", link: "/dashboard" },
   { id: 2, name: "Home", link: "/" },
-  { id: 3, name: "Settings", link: "/settings" },
-  { id: 4, name: "Sign out", link: null },
+  { id: 3, name: "Sign out", link: null },
 ];
 
 export const shops = [

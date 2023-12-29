@@ -3,9 +3,9 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
-import { usePathname, useRouter } from "next/navigation";
 import { Menu, Transition } from "@headlessui/react";
 import { Sling as Hamburger } from "hamburger-react";
+import { usePathname, useRouter } from "next/navigation";
 import { Fragment, useState, useEffect, useRef } from "react";
 
 import { ThemeSwitcher } from "./ui";
@@ -78,7 +78,7 @@ const Header = () => {
             </div>
           </div>
           <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-            <div className="relative rounded-full  p-2 border ">
+            <div className="relative rounded-full p-2">
               <ThemeSwitcher />
             </div>
 
