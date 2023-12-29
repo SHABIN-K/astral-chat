@@ -1,7 +1,7 @@
 "use client";
 
 import { shops } from "@/utils/constants";
-import { ShopModal } from "@/components/modal";
+import { ShopAddEditModal } from "@/components/modal";
 
 import Link from "next/link";
 import { toast } from "sonner";
@@ -9,8 +9,10 @@ import { useState } from "react";
 import { SquaresPlusIcon } from "@heroicons/react/24/outline";
 
 const DashBoard = () => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
+
+  const [newShop, setNewShop] = useState("");
 
   const styleDashboard = {
     card: "rounded-xl border-2 border-color p-4 w-full h-full animation-div overflow-hidden",
@@ -77,13 +79,14 @@ const DashBoard = () => {
           </div>
         </div>
       </div>
-      <ShopModal
+      <ShopAddEditModal
         isOpen={isOpen}
         setIsOpen={setIsOpen}
         title="Add Shop"
         btnLabel="save"
         handleBtn={handleCreate}
         isLoading={isLoading}
+        setData={setNewShop}
       />
     </div>
   );

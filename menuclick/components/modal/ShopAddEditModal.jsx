@@ -4,15 +4,16 @@ import { Fragment } from "react";
 import { XMarkIcon } from "@heroicons/react/24/solid";
 import { Dialog, Transition } from "@headlessui/react";
 
-import { FormButtons, WaitingLoader } from "../ui";
+import { FormButtons, FormInput, WaitingLoader } from "../ui";
 
-const ShopModal = ({
+const ShopAddEditModal = ({
   isOpen,
   setIsOpen,
   title,
   btnLabel,
   handleBtn,
   isLoading,
+  setData,
 }) => {
   function closeModal() {
     setIsOpen(false);
@@ -52,8 +53,8 @@ const ShopModal = ({
                   />
                 </div>
 
-                <div className="space-y-2 p-2">
-                  <div className="p-2 space-y-2 text-start text-color">
+                <div className="p-2 md:mx-3">
+                  <div className="p-2 text-start text-color">
                     <Dialog.Title
                       as="h3"
                       className="text-xl font-bold tracking-tight"
@@ -61,11 +62,25 @@ const ShopModal = ({
                       {title}
                     </Dialog.Title>
                   </div>
+                  <div className="p-1">
+                    <div className="flex flex-col space-y-1">
+                      <FormInput
+                        label="Name"
+                        type="text"
+                        name="name"
+                        value="xcvbxcbxcvxvcxcvxvc"
+                        placeholder="Enter your shop name"
+                        onChange=""
+                        classLabel="text-gray-600 text-sm font-medium"
+                        classInput="bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 dark:outline-none text-color text-sm rounded-lg block w-full p-1.5"
+                      />
+                    </div>
+                  </div>
                 </div>
 
                 <div className="flex justify-end items-end px-3 py-2">
                   <FormButtons
-                    mainClass="flex space-x-2"
+                    mainClass="flex space-x-1"
                     primaryClass="btn_form"
                     secondaryClass="btn_form"
                     secondaryLabelClass="flex items-center"
@@ -91,4 +106,4 @@ const ShopModal = ({
   );
 };
 
-export default ShopModal;
+export default ShopAddEditModal;

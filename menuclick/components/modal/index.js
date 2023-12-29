@@ -1,4 +1,4 @@
 import ConfirmModal from "./ConfirmModal";
-import ShopModal from "./ShopModal";
+import ShopAddEditModal from "./ShopAddEditModal";
 
-export { ConfirmModal, ShopModal };
+export { ConfirmModal, ShopAddEditModal };

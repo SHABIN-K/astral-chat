@@ -52,5 +52,14 @@
 
 /* Form desgin*/
 .btn_form {
-  @apply inline-flex justify-center rounded-md border border-transparent bg-btncolor px-4 py-1.5 text-sm font-medium text-btncolor hover:bg-gray-500 dark:hover:text-white focus:outline-none;
+  @apply inline-flex justify-center rounded-2xl border border-transparent bg-btncolor px-4 py-1.5 text-sm font-medium text-btncolor hover:bg-gray-500 dark:hover:text-white focus:outline-none;
 }
+
+.input_form {
+  @apply bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-1;
+}
+
+.label_form {
+  @apply text-color text-sm font-medium;
+}
+/* Form desgin*/
