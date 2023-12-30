@@ -1,7 +1,4 @@
-export const navlinks = [
-  { name: "Dashboard", link: "/dashboard" },
-  { name: "Settings", link: "/settings" },
-];
+export const navlinks = [{ name: "Dashboard", link: "/dashboard" }];
 
 export const navItems = [
   { id: 1, name: "Your Profile", link: "/dashboard" },
