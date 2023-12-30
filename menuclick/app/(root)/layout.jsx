@@ -2,7 +2,7 @@ import { Toaster } from "sonner";
 import { Inter } from "next/font/google";
 
 import "../globals.css";
-import { AuthProvider, ColorProvider } from "@/modules/providers";
+import { AuthProvider, ColorProvider, UiProvider } from "@/modules/providers";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -17,7 +17,9 @@ export default function RootLayout({ children }) {
       <body className={`${inter.className} bg-color`}>
         <AuthProvider>
           <Toaster position="bottom-right" closeButton richColors />
-          <ColorProvider>{children}</ColorProvider>
+          <UiProvider>
+            <ColorProvider>{children}</ColorProvider>
+          </UiProvider>
         </AuthProvider>
       </body>
     </html>
