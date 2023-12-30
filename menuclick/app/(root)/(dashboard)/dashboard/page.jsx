@@ -1,18 +1,20 @@
 "use client";
 
 import axios from "axios";
-import { shops } from "@/utils/constants";
 import { ShopAddEditModal } from "@/components/modal";
 import { ShopValidation } from "@/utils/validations/shop";
+import SkeletonLoading from "@/components/skeleton/SkeletonCard";
 
 import Link from "next/link";
 import { toast } from "sonner";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { SquaresPlusIcon } from "@heroicons/react/24/outline";
+import { useUserShop } from "@/utils/hooks/useShop";
 
 const DashBoard = () => {
   const { data: session } = useSession();
+
   const [isLoading, setIsLoading] = useState(false);
 
   const [addIsOpen, setAddIsOpen] = useState(false);
@@ -108,6 +110,7 @@ const DashBoard = () => {
       </div>
       <div className="flex-center w-full mt-3">
         <ShopCard
+          userID={session?.user?.id}
           setAddIsOpen={setAddIsOpen}
           //setEditIsOpen={setEditIsOpen}
           //setDeleteShop={setDeleteShop}
@@ -148,7 +151,27 @@ const DashBoard = () => {
 
 export default DashBoard;
 
-const ShopCard = ({ setAddIsOpen }) => {
+const ShopCard = ({ userID, setAddIsOpen }) => {
+  const [shop, setShop] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const {
+    data: fetchedData,
+    error,
+    isLoading: loasding,
+  } = useUserShop({ userId: userID });
+
+  useEffect(() => {
+    if (fetchedData) {
+      setShop(fetchedData);
+    }
+
+    if (error) {
+      console.error("Error :", error);
+      toast("Uh-oh! There was an issue fetching shop details");
+    }
+  }, [error, fetchedData]);
+
   const styleShopCard = {
     card: "rounded-xl border-2 border-color p-4 w-full h-full animation-div overflow-hidden",
     h2: "font-semibold text-base sm:text-lg text-color",
@@ -159,36 +182,42 @@ const ShopCard = ({ setAddIsOpen }) => {
       } p-1 text-sm rounded-lg`,
   };
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 w-full">
-      {shops.map((data, index) => (
-        //70
-        <Link key={index} href={`dashboard/${data.id}`}>
+    <>
+      {loading ? (
+        <SkeletonLoading />
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 w-full">
+          {shop.map((data, index) => (
+            //70
+            <Link key={index} href={`dashboard/${data.id}`}>
+              <div
+                className={`flex flex-col justify-between  ${styleShopCard.card}`}
+              >
+                <div className="flex justify-between items-center">
+                  <h2 className={styleShopCard.h2}>{data.name}</h2>
+                </div>
+                <p className={`sm:text-base  ${styleShopCard.p}`}>
+                  {data.about}
+                </p>
+                <div className="flex justify-between">
+                  <h3 className="text-xs text-gray-400">{data.email}</h3>
+                  <h3 className="text-xs text-gray-300">{data.location}</h3>
+                </div>
+              </div>
+            </Link>
+          ))}
           <div
-            className={`flex flex-col justify-between  ${styleShopCard.card}`}
+            className={`flex-center flex-col  ${styleShopCard.card}`}
+            onClick={() => setAddIsOpen(true)}
           >
-            <div className="flex justify-between items-center">
-              <h2 className={styleShopCard.h2}>{data.name}</h2>
-            </div>
-            <p className={`sm:text-base  ${styleShopCard.p}`}>{data.about}</p>
-            <div className="flex justify-between">
-              <h3 className="text-xs text-gray-400">{data.email}</h3>
-              <h3 className="text-xs text-gray-300">
-                {data.location},{data.country}
-              </h3>
-            </div>
+            <SquaresPlusIcon className="h-8 text-color" />
+            <h2 className={styleShopCard.h2}>Add new shop</h2>
+            <p className={`text-center ${styleShopCard.p}`}>
+              Add a new restaurant to your digital menu
+            </p>
           </div>
-        </Link>
-      ))}
-      <div
-        className={`flex-center flex-col  ${styleShopCard.card}`}
-        onClick={() => setAddIsOpen(true)}
-      >
-        <SquaresPlusIcon className="h-8 text-color" />
-        <h2 className={styleShopCard.h2}>Add new shop</h2>
-        <p className={`text-center ${styleShopCard.p}`}>
-          Add a new restaurant to your digital menu
-        </p>
-      </div>
-    </div>
+        </div>
+      )}
+    </>
   );
 };

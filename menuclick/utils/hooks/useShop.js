@@ -1,9 +1,9 @@
 import useSWR from "swr";
 import fetcher from "../fetcher";
 
-const useUserShop = ({ userID }) => {
+const useUserShop = ({ userId }) => {
   const { data, error, isLoading, mutate } = useSWR(
-    `/api/shop/${userID}`,
+    `/api/shop/${userId}`,
     fetcher
   );
   return {
@@ -13,3 +13,5 @@ const useUserShop = ({ userID }) => {
     mutate,
   };
 };
+
+export { useUserShop };
