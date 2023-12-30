@@ -1,16 +1,20 @@
 "use client";
 
-import { ShopAddEditModal } from "@/components/modal";
 import { ShopValidation } from "@/utils/validations/shop";
 import SkeletonLoading from "@/components/skeleton/SkeletonCard";
+import { ConfirmModal, ShopAddEditModal } from "@/components/modal";
 
 import axios from "axios";
 import Link from "next/link";
 import { toast } from "sonner";
-import { useEffect, useState } from "react";
+import {
+  EllipsisVerticalIcon,
+  SquaresPlusIcon,
+} from "@heroicons/react/24/outline";
 import { useSession } from "next-auth/react";
-import { SquaresPlusIcon } from "@heroicons/react/24/outline";
 import { useUserShop } from "@/utils/hooks/useShop";
+import { Menu, Transition } from "@headlessui/react";
+import { useEffect, useState, Fragment } from "react";
 
 const DashBoard = () => {
   const { data: session } = useSession();
@@ -18,8 +22,8 @@ const DashBoard = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const [addIsOpen, setAddIsOpen] = useState(false);
-  //const [editIsOpen, setEditIsOpen] = useState(false);
-  //const [deleteShop, setDeleteShop] = useState(false);
+  const [editIsOpen, setEditIsOpen] = useState(false);
+  const [deleteShop, setDeleteShop] = useState(false);
 
   const [shop, setShop] = useState("");
   const [newShop, setNewShop] = useState("");
@@ -69,7 +73,7 @@ const DashBoard = () => {
       setIsLoading(false);
     }
   };
-  /*
+
   const handleUpdateBtn = () => {
     setIsLoading(true);
     try {
@@ -93,7 +97,7 @@ const DashBoard = () => {
       setIsLoading(false);
     }
   };
-  */
+
   return (
     <div className="sm:mx-4 flex flex-col">
       <div className="flex justify-between w-full">
@@ -112,8 +116,8 @@ const DashBoard = () => {
         <ShopCard
           userID={session?.user?.id}
           setAddIsOpen={setAddIsOpen}
-          //setEditIsOpen={setEditIsOpen}
-          //setDeleteShop={setDeleteShop}
+          setEditIsOpen={setEditIsOpen}
+          setDeleteShop={setDeleteShop}
         />
       </div>
       <ShopAddEditModal
@@ -125,7 +129,7 @@ const DashBoard = () => {
         isLoading={isLoading}
         setData={setNewShop}
       />
-      {/* 
+
       <ShopAddEditModal
         isOpen={editIsOpen}
         setIsOpen={setEditIsOpen}
@@ -144,14 +148,13 @@ const DashBoard = () => {
         handleConfirmBtn={handleDeleteBtn}
         isLoading={isLoading}
       />
-      */}
     </div>
   );
 };
 
 export default DashBoard;
 
-const ShopCard = ({ userID, setAddIsOpen }) => {
+const ShopCard = ({ userID, setAddIsOpen, setEditIsOpen, setDeleteShop }) => {
   const [shop, setShop] = useState([]);
 
   const {
@@ -192,6 +195,45 @@ const ShopCard = ({ userID, setAddIsOpen }) => {
             >
               <div className="flex justify-between items-center">
                 <h2 className={styleShopCard.h2}>{data.name}</h2>
+                <Menu as="div" className="relative">
+                  <Menu.Button className="relative flex rounded-full outline-none ">
+                    <EllipsisVerticalIcon className="icon" />
+                  </Menu.Button>
+                  <Transition
+                    as={Fragment}
+                    enter="transition ease-out duration-100"
+                    enterFrom="transform opacity-0 scale-95"
+                    enterTo="transform opacity-100 scale-100"
+                    leave="transition ease-in duration-75"
+                    leaveFrom="transform opacity-100 scale-100"
+                    leaveTo="transform opacity-0 scale-95"
+                  >
+                    <Menu.Items className="flex flex-col absolute right-0 z-10 mt-2 w-32 origin-top-right rounded-lg bg-white dark:bg-gray-800 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none p-1">
+                      <Menu.Item>
+                        {({ active }) => (
+                          <p
+                            className={styleShopCard.menu(active)}
+                            onClick={(e) => {
+                              setEditIsOpen(true);
+                            }}
+                          >
+                            Edit
+                          </p>
+                        )}
+                      </Menu.Item>
+                      <Menu.Item>
+                        {({ active }) => (
+                          <p
+                            className={styleShopCard.menu(active)}
+                            onClick={() => setDeleteShop(true)}
+                          >
+                            Delete
+                          </p>
+                        )}
+                      </Menu.Item>
+                    </Menu.Items>
+                  </Transition>
+                </Menu>
               </div>
               <p className={`sm:text-base  ${styleShopCard.p}`}>{data.about}</p>
               <div className="flex justify-between">
