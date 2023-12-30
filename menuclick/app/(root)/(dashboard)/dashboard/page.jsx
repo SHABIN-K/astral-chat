@@ -1,31 +1,65 @@
 "use client";
 
+import axios from "axios";
 import { shops } from "@/utils/constants";
-import { ConfirmModal, ShopAddEditModal } from "@/components/modal";
+import { ShopAddEditModal } from "@/components/modal";
+import { ShopValidation } from "@/utils/validations/shop";
 
 import Link from "next/link";
 import { toast } from "sonner";
-import {
-  EllipsisVerticalIcon,
-  SquaresPlusIcon,
-} from "@heroicons/react/24/outline";
-import { useState, Fragment } from "react";
-import { Menu, Transition } from "@headlessui/react";
+import { useState } from "react";
+import { useSession } from "next-auth/react";
+import { SquaresPlusIcon } from "@heroicons/react/24/outline";
 
 const DashBoard = () => {
+  const { data: session } = useSession();
   const [isLoading, setIsLoading] = useState(false);
 
   const [addIsOpen, setAddIsOpen] = useState(false);
-  const [editIsOpen, setEditIsOpen] = useState(false);
-  const [deleteShop, setDeleteShop] = useState(false);
+  //const [editIsOpen, setEditIsOpen] = useState(false);
+  //const [deleteShop, setDeleteShop] = useState(false);
 
   const [shop, setShop] = useState("");
   const [newShop, setNewShop] = useState("");
 
-  const handleCreateBtn = () => {
+  const handleCreateBtn = async () => {
     setIsLoading(true);
+
+    const userInput = {
+      name: newShop.name,
+      about: newShop.about,
+      email: newShop.email,
+      phoneNumber: newShop.phonenumber,
+      location: newShop.location,
+    };
+
     try {
-      toast.success("You are successfully created");
+      // Validate the user input
+      const validation = ShopValidation.addShop.safeParse(userInput);
+
+      //if validation is failure, return error message
+      if (validation.success === false) {
+        const { issues } = validation.error;
+        issues.forEach((err) => {
+          toast.error(err.message);
+        });
+      } else {
+        // If validation is successful, make the API request
+        const response = await axios.post("/api/shop", {
+          userID: session.user.id,
+          name: newShop.name,
+          about: newShop.about,
+          email: newShop.email,
+          phoneNumber: newShop.phonenumber,
+          location: newShop.location,
+        });
+        if (response.statusText === "FAILED") {
+          toast.error(response.data);
+        } else {
+          toast.success("Successfully created");
+          window.location.href = "/dashboard";
+        }
+      }
     } catch (error) {
       console.log(error.message);
       toast.error("Something went wrong");
@@ -33,7 +67,7 @@ const DashBoard = () => {
       setIsLoading(false);
     }
   };
-
+  /*
   const handleUpdateBtn = () => {
     setIsLoading(true);
     try {
@@ -57,7 +91,7 @@ const DashBoard = () => {
       setIsLoading(false);
     }
   };
-
+  */
   return (
     <div className="sm:mx-4 flex flex-col">
       <div className="flex justify-between w-full">
@@ -75,8 +109,8 @@ const DashBoard = () => {
       <div className="flex-center w-full mt-3">
         <ShopCard
           setAddIsOpen={setAddIsOpen}
-          setEditIsOpen={setEditIsOpen}
-          setDeleteShop={setDeleteShop}
+          //setEditIsOpen={setEditIsOpen}
+          //setDeleteShop={setDeleteShop}
         />
       </div>
       <ShopAddEditModal
@@ -88,6 +122,7 @@ const DashBoard = () => {
         isLoading={isLoading}
         setData={setNewShop}
       />
+      {/* 
       <ShopAddEditModal
         isOpen={editIsOpen}
         setIsOpen={setEditIsOpen}
@@ -106,13 +141,14 @@ const DashBoard = () => {
         handleConfirmBtn={handleDeleteBtn}
         isLoading={isLoading}
       />
+      */}
     </div>
   );
 };
 
 export default DashBoard;
 
-const ShopCard = ({ setAddIsOpen, setEditIsOpen, setDeleteShop }) => {
+const ShopCard = ({ setAddIsOpen }) => {
   const styleShopCard = {
     card: "rounded-xl border-2 border-color p-4 w-full h-full animation-div overflow-hidden",
     h2: "font-semibold text-base sm:text-lg text-color",
@@ -132,45 +168,6 @@ const ShopCard = ({ setAddIsOpen, setEditIsOpen, setDeleteShop }) => {
           >
             <div className="flex justify-between items-center">
               <h2 className={styleShopCard.h2}>{data.name}</h2>
-              <Menu as="div" className="relative">
-                <Menu.Button className="relative flex rounded-full outline-none ">
-                  <EllipsisVerticalIcon className="icon" />
-                </Menu.Button>
-                <Transition
-                  as={Fragment}
-                  enter="transition ease-out duration-100"
-                  enterFrom="transform opacity-0 scale-95"
-                  enterTo="transform opacity-100 scale-100"
-                  leave="transition ease-in duration-75"
-                  leaveFrom="transform opacity-100 scale-100"
-                  leaveTo="transform opacity-0 scale-95"
-                >
-                  <Menu.Items className="flex flex-col absolute right-0 z-10 mt-2 w-32 origin-top-right rounded-lg bg-white dark:bg-gray-800 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none p-1">
-                    <Menu.Item>
-                      {({ active }) => (
-                        <p
-                          className={styleShopCard.menu(active)}
-                          onClick={(e) => {
-                            setEditIsOpen(true);
-                          }}
-                        >
-                          Edit
-                        </p>
-                      )}
-                    </Menu.Item>
-                    <Menu.Item>
-                      {({ active }) => (
-                        <p
-                          className={styleShopCard.menu(active)}
-                          onClick={() => setDeleteShop(true)}
-                        >
-                          Delete
-                        </p>
-                      )}
-                    </Menu.Item>
-                  </Menu.Items>
-                </Transition>
-              </Menu>
             </div>
             <p className={`sm:text-base  ${styleShopCard.p}`}>{data.about}</p>
             <div className="flex justify-between">
