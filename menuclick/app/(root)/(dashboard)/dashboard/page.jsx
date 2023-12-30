@@ -13,7 +13,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { useSession } from "next-auth/react";
 import { useUserShop } from "@/utils/hooks/useShop";
-import { Menu, Transition } from "@headlessui/react";
+import { Menu, Transition, Popover } from "@headlessui/react";
 import { useEffect, useState, Fragment } from "react";
 
 const DashBoard = () => {
@@ -177,11 +177,9 @@ const ShopCard = ({ userID, setAddIsOpen, setEditIsOpen, setDeleteShop }) => {
   const styleShopCard = {
     card: "rounded-xl border-2 border-color p-4 w-full h-full animation-div overflow-hidden",
     h2: "font-semibold text-base sm:text-lg text-color",
+    h3: "text-xs text-gray-400",
     p: "sm:mt-1 block text-color text-sm",
-    menu: (active) =>
-      `${
-        active ? "bg-gray-200 dark:bg-gray-500  " : ""
-      } p-1 text-sm rounded-lg`,
+    menu: "hover:bg-gray-200 dark:hover:bg-gray-500 p-1 text-sm rounded-lg",
   };
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 w-full">
@@ -195,50 +193,16 @@ const ShopCard = ({ userID, setAddIsOpen, setEditIsOpen, setDeleteShop }) => {
             >
               <div className="flex justify-between items-center">
                 <h2 className={styleShopCard.h2}>{data.name}</h2>
-                <Menu as="div" className="relative">
-                  <Menu.Button className="relative flex rounded-full outline-none ">
-                    <EllipsisVerticalIcon className="icon" />
-                  </Menu.Button>
-                  <Transition
-                    as={Fragment}
-                    enter="transition ease-out duration-100"
-                    enterFrom="transform opacity-0 scale-95"
-                    enterTo="transform opacity-100 scale-100"
-                    leave="transition ease-in duration-75"
-                    leaveFrom="transform opacity-100 scale-100"
-                    leaveTo="transform opacity-0 scale-95"
-                  >
-                    <Menu.Items className="flex flex-col absolute right-0 z-10 mt-2 w-32 origin-top-right rounded-lg bg-white dark:bg-gray-800 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none p-1">
-                      <Menu.Item>
-                        {({ active }) => (
-                          <p
-                            className={styleShopCard.menu(active)}
-                            onClick={(e) => {
-                              setEditIsOpen(true);
-                            }}
-                          >
-                            Edit
-                          </p>
-                        )}
-                      </Menu.Item>
-                      <Menu.Item>
-                        {({ active }) => (
-                          <p
-                            className={styleShopCard.menu(active)}
-                            onClick={() => setDeleteShop(true)}
-                          >
-                            Delete
-                          </p>
-                        )}
-                      </Menu.Item>
-                    </Menu.Items>
-                  </Transition>
-                </Menu>
+                <PopOver
+                  setEditIsOpen={setEditIsOpen}
+                  setDeleteShop={setDeleteShop}
+                  styleShopCard={styleShopCard}
+                />
               </div>
               <p className={`sm:text-base  ${styleShopCard.p}`}>{data.about}</p>
               <div className="flex justify-between">
-                <h3 className="text-xs text-gray-400">{data.email}</h3>
-                <h3 className="text-xs text-gray-300">{data.location}</h3>
+                <h3 className={styleShopCard.h3}>{data.email}</h3>
+                <h3 className={styleShopCard.h3}>{data.location}</h3>
               </div>
             </div>
           </Link>
@@ -255,5 +219,33 @@ const ShopCard = ({ userID, setAddIsOpen, setEditIsOpen, setDeleteShop }) => {
         </p>
       </div>
     </div>
+  );
+};
+
+const PopOver = ({ setEditIsOpen, setDeleteShop, styleShopCard }) => {
+  return (
+    <Popover as="div" className="relative">
+      <Popover.Button className="relative flex rounded-full outline-none">
+        <EllipsisVerticalIcon className="icon" />
+      </Popover.Button>
+      <Transition
+        as={Fragment}
+        enter="transition ease-out duration-100"
+        enterFrom="transform opacity-0 scale-95"
+        enterTo="transform opacity-100 scale-100"
+        leave="transition ease-in duration-75"
+        leaveFrom="transform opacity-100 scale-100"
+        leaveTo="transform opacity-0 scale-95"
+      >
+        <Popover.Panel className="flex flex-col absolute right-0 z-10 mt-2 w-32 origin-top-right rounded-lg bg-white dark:bg-gray-800 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none p-1">
+          <p className={styleShopCard.menu} onClick={() => setEditIsOpen(true)}>
+            Edit
+          </p>
+          <p className={styleShopCard.menu} onClick={() => setDeleteShop(true)}>
+            Delete
+          </p>
+        </Popover.Panel>
+      </Transition>
+    </Popover>
   );
 };
