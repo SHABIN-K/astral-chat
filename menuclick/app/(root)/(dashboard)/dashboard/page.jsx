@@ -13,8 +13,8 @@ import {
 } from "@heroicons/react/24/outline";
 import { useSession } from "next-auth/react";
 import { useUserShop } from "@/utils/hooks/useShop";
-import { Menu, Transition, Popover } from "@headlessui/react";
 import { useEffect, useState, Fragment } from "react";
+import { Transition, Popover } from "@headlessui/react";
 
 const DashBoard = () => {
   const { data: session } = useSession();
@@ -179,7 +179,7 @@ const ShopCard = ({ userID, setAddIsOpen, setEditIsOpen, setDeleteShop }) => {
     h2: "font-semibold text-base sm:text-lg text-color",
     h3: "text-xs text-gray-400",
     p: "sm:mt-1 block text-color text-sm",
-    menu: "hover:bg-gray-200 dark:hover:bg-gray-500 p-1 text-sm rounded-lg",
+    menu: "hover:bg-gray-200 dark:hover:bg-gray-500 p-1 text-sm md:text-xs rounded-lg",
   };
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 w-full">
@@ -187,25 +187,24 @@ const ShopCard = ({ userID, setAddIsOpen, setEditIsOpen, setDeleteShop }) => {
         <SkeletonLoading />
       ) : (
         shop.map((data, index) => (
-          <Link key={index} href={`dashboard/${data.id}`}>
-            <div
-              className={`flex flex-col justify-between  ${styleShopCard.card}`}
-            >
-              <div className="flex justify-between items-center">
-                <h2 className={styleShopCard.h2}>{data.name}</h2>
-                <PopOver
-                  setEditIsOpen={setEditIsOpen}
-                  setDeleteShop={setDeleteShop}
-                  styleShopCard={styleShopCard}
-                />
-              </div>
-              <p className={`sm:text-base  ${styleShopCard.p}`}>{data.about}</p>
+          <div
+            key={index}
+            className={`flex flex-col justify-between  ${styleShopCard.card}`}
+          >
+            <PopOver
+              setEditIsOpen={setEditIsOpen}
+              setDeleteShop={setDeleteShop}
+              styleShopCard={styleShopCard}
+            />
+            <Link href={`dashboard/${data.id}`}>
+              <h2 className={styleShopCard.h2}>{data.name}</h2>
+              <p className={`sm:text-base ${styleShopCard.p}`}>{data.about}</p>
               <div className="flex justify-between">
                 <h3 className={styleShopCard.h3}>{data.email}</h3>
                 <h3 className={styleShopCard.h3}>{data.location}</h3>
               </div>
-            </div>
-          </Link>
+            </Link>
+          </div>
         ))
       )}
       <div
@@ -225,7 +224,7 @@ const ShopCard = ({ userID, setAddIsOpen, setEditIsOpen, setDeleteShop }) => {
 const PopOver = ({ setEditIsOpen, setDeleteShop, styleShopCard }) => {
   return (
     <Popover as="div" className="relative">
-      <Popover.Button className="relative flex rounded-full outline-none">
+      <Popover.Button className="absolute right-0 flex rounded-full outline-none">
         <EllipsisVerticalIcon className="icon" />
       </Popover.Button>
       <Transition
@@ -237,7 +236,7 @@ const PopOver = ({ setEditIsOpen, setDeleteShop, styleShopCard }) => {
         leaveFrom="transform opacity-100 scale-100"
         leaveTo="transform opacity-0 scale-95"
       >
-        <Popover.Panel className="flex flex-col absolute right-0 z-10 mt-2 w-32 origin-top-right rounded-lg bg-white dark:bg-gray-800 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none p-1">
+        <Popover.Panel className="flex flex-col absolute right-0 z-10 mt-4 w-32 origin-top-right rounded-lg bg-white dark:bg-gray-800 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none p-1">
           <p className={styleShopCard.menu} onClick={() => setEditIsOpen(true)}>
             Edit
           </p>
