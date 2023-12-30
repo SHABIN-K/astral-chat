@@ -56,7 +56,7 @@ const Header = () => {
             <Hamburger toggled={open} toggle={setOpen} rounded />
           </div>
           <div className="flex-center flex-1 sm:justify-start">
-            <Link href="/" className="flex flex-shrink-0 items-center">
+            <Link href="/dashboard" className="flex flex-shrink-0 items-center">
               <Logo size={40} />
             </Link>
             <div className="hidden sm:ml-10 sm:block">
