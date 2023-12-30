@@ -22,16 +22,6 @@ const DashBoard = () => {
   const [shop, setShop] = useState("");
   const [newShop, setNewShop] = useState("");
 
-  const styleDashboard = {
-    card: "rounded-xl border-2 border-color p-4 w-full h-full animation-div overflow-hidden",
-    h2: "font-semibold text-base sm:text-lg text-color",
-    p: "sm:mt-1 block text-color text-sm",
-    menu: (active) =>
-      `${
-        active ? "bg-gray-200 dark:bg-gray-500  " : ""
-      } p-1 text-sm rounded-lg`,
-  };
-
   const handleCreateBtn = () => {
     setIsLoading(true);
     try {
@@ -83,78 +73,11 @@ const DashBoard = () => {
         </button>
       </div>
       <div className="flex-center w-full mt-3">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 w-full">
-          {shops.map((data, index) => (
-            //70
-            <Link key={index} href={`dashboard/${data.id}`}>
-              <div
-                className={`flex flex-col justify-between  ${styleDashboard.card}`}
-              >
-                <div className="flex justify-between items-center">
-                  <h2 className={styleDashboard.h2}>{data.name}</h2>
-                  <Menu as="div" className="relative">
-                    <Menu.Button className="relative flex rounded-full outline-none ">
-                      <EllipsisVerticalIcon className="icon" />
-                    </Menu.Button>
-                    <Transition
-                      as={Fragment}
-                      enter="transition ease-out duration-100"
-                      enterFrom="transform opacity-0 scale-95"
-                      enterTo="transform opacity-100 scale-100"
-                      leave="transition ease-in duration-75"
-                      leaveFrom="transform opacity-100 scale-100"
-                      leaveTo="transform opacity-0 scale-95"
-                    >
-                      <Menu.Items className="flex flex-col absolute right-0 z-10 mt-2 w-32 origin-top-right rounded-lg bg-white dark:bg-gray-800 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none p-1">
-                        <Menu.Item>
-                          {({ active }) => (
-                            <p
-                              className={styleDashboard.menu(active)}
-                              onClick={(e) => {
-                                setEditIsOpen(true);
-                              }}
-                            >
-                              Edit
-                            </p>
-                          )}
-                        </Menu.Item>
-                        <Menu.Item>
-                          {({ active }) => (
-                            <p
-                              className={styleDashboard.menu(active)}
-                              onClick={() => setDeleteShop(true)}
-                            >
-                              Delete
-                            </p>
-                          )}
-                        </Menu.Item>
-                      </Menu.Items>
-                    </Transition>
-                  </Menu>
-                </div>
-                <p className={`sm:text-base  ${styleDashboard.p}`}>
-                  {data.about}
-                </p>
-                <div className="flex justify-between">
-                  <h3 className="text-xs text-gray-400">{data.email}</h3>
-                  <h3 className="text-xs text-gray-300">
-                    {data.location},{data.country}
-                  </h3>
-                </div>
-              </div>
-            </Link>
-          ))}
-          <div
-            className={`flex-center flex-col  ${styleDashboard.card}`}
-            onClick={() => setAddIsOpen(true)}
-          >
-            <SquaresPlusIcon className="h-8 text-color" />
-            <h2 className={styleDashboard.h2}>Add new shop</h2>
-            <p className={`text-center ${styleDashboard.p}`}>
-              Add a new restaurant to your digital menu
-            </p>
-          </div>
-        </div>
+        <ShopCard
+          setAddIsOpen={setAddIsOpen}
+          setEditIsOpen={setEditIsOpen}
+          setDeleteShop={setDeleteShop}
+        />
       </div>
       <ShopAddEditModal
         isOpen={addIsOpen}
@@ -188,3 +111,87 @@ const DashBoard = () => {
 };
 
 export default DashBoard;
+
+const ShopCard = ({ setAddIsOpen, setEditIsOpen, setDeleteShop }) => {
+  const styleShopCard = {
+    card: "rounded-xl border-2 border-color p-4 w-full h-full animation-div overflow-hidden",
+    h2: "font-semibold text-base sm:text-lg text-color",
+    p: "sm:mt-1 block text-color text-sm",
+    menu: (active) =>
+      `${
+        active ? "bg-gray-200 dark:bg-gray-500  " : ""
+      } p-1 text-sm rounded-lg`,
+  };
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 w-full">
+      {shops.map((data, index) => (
+        //70
+        <Link key={index} href={`dashboard/${data.id}`}>
+          <div
+            className={`flex flex-col justify-between  ${styleShopCard.card}`}
+          >
+            <div className="flex justify-between items-center">
+              <h2 className={styleShopCard.h2}>{data.name}</h2>
+              <Menu as="div" className="relative">
+                <Menu.Button className="relative flex rounded-full outline-none ">
+                  <EllipsisVerticalIcon className="icon" />
+                </Menu.Button>
+                <Transition
+                  as={Fragment}
+                  enter="transition ease-out duration-100"
+                  enterFrom="transform opacity-0 scale-95"
+                  enterTo="transform opacity-100 scale-100"
+                  leave="transition ease-in duration-75"
+                  leaveFrom="transform opacity-100 scale-100"
+                  leaveTo="transform opacity-0 scale-95"
+                >
+                  <Menu.Items className="flex flex-col absolute right-0 z-10 mt-2 w-32 origin-top-right rounded-lg bg-white dark:bg-gray-800 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none p-1">
+                    <Menu.Item>
+                      {({ active }) => (
+                        <p
+                          className={styleShopCard.menu(active)}
+                          onClick={(e) => {
+                            setEditIsOpen(true);
+                          }}
+                        >
+                          Edit
+                        </p>
+                      )}
+                    </Menu.Item>
+                    <Menu.Item>
+                      {({ active }) => (
+                        <p
+                          className={styleShopCard.menu(active)}
+                          onClick={() => setDeleteShop(true)}
+                        >
+                          Delete
+                        </p>
+                      )}
+                    </Menu.Item>
+                  </Menu.Items>
+                </Transition>
+              </Menu>
+            </div>
+            <p className={`sm:text-base  ${styleShopCard.p}`}>{data.about}</p>
+            <div className="flex justify-between">
+              <h3 className="text-xs text-gray-400">{data.email}</h3>
+              <h3 className="text-xs text-gray-300">
+                {data.location},{data.country}
+              </h3>
+            </div>
+          </div>
+        </Link>
+      ))}
+      <div
+        className={`flex-center flex-col  ${styleShopCard.card}`}
+        onClick={() => setAddIsOpen(true)}
+      >
+        <SquaresPlusIcon className="h-8 text-color" />
+        <h2 className={styleShopCard.h2}>Add new shop</h2>
+        <p className={`text-center ${styleShopCard.p}`}>
+          Add a new restaurant to your digital menu
+        </p>
+      </div>
+    </div>
+  );
+};
