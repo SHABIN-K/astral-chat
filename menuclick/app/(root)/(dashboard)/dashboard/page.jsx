@@ -18,6 +18,11 @@ import { Transition, Popover } from "@headlessui/react";
 
 const DashBoard = () => {
   const { data: session } = useSession();
+  const {
+    data: fetchedData,
+    error,
+    isLoading: loading,
+  } = useUserShop({ userId: session?.user?.id });
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -25,8 +30,20 @@ const DashBoard = () => {
   const [editIsOpen, setEditIsOpen] = useState(false);
   const [deleteShop, setDeleteShop] = useState(false);
 
-  const [shop, setShop] = useState("");
+  const [shop, setShop] = useState(null);
   const [newShop, setNewShop] = useState("");
+  const [shopData, setShopData] = useState([]);
+
+  useEffect(() => {
+    if (fetchedData) {
+      setShopData(fetchedData);
+    }
+
+    if (error) {
+      console.error("Error :", error);
+      toast("Uh-oh! There was an issue fetching shop details");
+    }
+  }, [error, fetchedData]);
 
   const handleCreateBtn = async () => {
     setIsLoading(true);
@@ -63,8 +80,9 @@ const DashBoard = () => {
           toast.error(response.data);
         } else {
           toast.success("Successfully created");
-          window.location.href = "/dashboard";
+          //window.location.href = "/dashboard";
         }
+        setAddIsOpen(false);
       }
     } catch (error) {
       console.log(error.message);
@@ -86,10 +104,23 @@ const DashBoard = () => {
     }
   };
 
-  const handleDeleteBtn = () => {
+  const handleDeleteBtn = async () => {
     setIsLoading(true);
     try {
-      toast.success("You are successfully Deleted");
+      const response = await axios.delete("/api/shop", {
+        data: {
+          id: shop.id,
+        },
+      });
+      if (response.statusText === "FAILED") {
+        toast.error(response.data);
+      } else {
+        setNewShop((prevTableData) =>
+          prevTableData.filter((document) => document.id !== shop.id)
+        );
+        toast("Hooray! The Shop has been removed successfully.");
+      }
+      setDeleteShop(false);
     } catch (error) {
       console.log(error.message);
       toast.error("Something went wrong");
@@ -114,10 +145,12 @@ const DashBoard = () => {
       </div>
       <div className="flex-center w-full mt-3">
         <ShopCard
-          userID={session?.user?.id}
+          shopData={shopData}
           setAddIsOpen={setAddIsOpen}
           setEditIsOpen={setEditIsOpen}
           setDeleteShop={setDeleteShop}
+          setShop={setShop}
+          isLoading={loading}
         />
       </div>
       <ShopAddEditModal
@@ -154,26 +187,14 @@ const DashBoard = () => {
 
 export default DashBoard;
 
-const ShopCard = ({ userID, setAddIsOpen, setEditIsOpen, setDeleteShop }) => {
-  const [shop, setShop] = useState([]);
-
-  const {
-    data: fetchedData,
-    error,
-    isLoading: loading,
-  } = useUserShop({ userId: userID });
-
-  useEffect(() => {
-    if (fetchedData) {
-      setShop(fetchedData);
-    }
-
-    if (error) {
-      console.error("Error :", error);
-      toast("Uh-oh! There was an issue fetching shop details");
-    }
-  }, [error, fetchedData]);
-
+const ShopCard = ({
+  shopData,
+  setAddIsOpen,
+  setEditIsOpen,
+  setDeleteShop,
+  setShop,
+  isLoading,
+}) => {
   const styleShopCard = {
     card: "rounded-xl border-2 border-color p-4 w-full h-full animation-div overflow-hidden",
     h2: "font-semibold text-base sm:text-lg text-color",
@@ -183,18 +204,20 @@ const ShopCard = ({ userID, setAddIsOpen, setEditIsOpen, setDeleteShop }) => {
   };
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 w-full">
-      {loading ? (
+      {isLoading ? (
         <SkeletonLoading />
       ) : (
-        shop.map((data, index) => (
+        shopData.map((data, index) => (
           <div
             key={index}
             className={`flex flex-col justify-between  ${styleShopCard.card}`}
           >
             <PopOver
+              post={data}
               setEditIsOpen={setEditIsOpen}
               setDeleteShop={setDeleteShop}
               styleShopCard={styleShopCard}
+              setShop={setShop}
             />
             <Link href={`dashboard/${data.id}`}>
               <h2 className={styleShopCard.h2}>{data.name}</h2>
@@ -221,7 +244,13 @@ const ShopCard = ({ userID, setAddIsOpen, setEditIsOpen, setDeleteShop }) => {
   );
 };
 
-const PopOver = ({ setEditIsOpen, setDeleteShop, styleShopCard }) => {
+const PopOver = ({
+  post,
+  setEditIsOpen,
+  setDeleteShop,
+  styleShopCard,
+  setShop,
+}) => {
   return (
     <Popover as="div" className="relative">
       <Popover.Button className="absolute right-0 flex rounded-full outline-none">
@@ -237,10 +266,22 @@ const PopOver = ({ setEditIsOpen, setDeleteShop, styleShopCard }) => {
         leaveTo="transform opacity-0 scale-95"
       >
         <Popover.Panel className="flex flex-col absolute right-0 z-10 mt-4 w-32 origin-top-right rounded-lg bg-white dark:bg-gray-800 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none p-1">
-          <p className={styleShopCard.menu} onClick={() => setEditIsOpen(true)}>
+          <p
+            className={styleShopCard.menu}
+            onClick={() => {
+              setShop(post);
+              setEditIsOpen(true);
+            }}
+          >
             Edit
           </p>
-          <p className={styleShopCard.menu} onClick={() => setDeleteShop(true)}>
+          <p
+            className={styleShopCard.menu}
+            onClick={() => {
+              setShop(post);
+              setDeleteShop(true);
+            }}
+          >
             Delete
           </p>
         </Popover.Panel>

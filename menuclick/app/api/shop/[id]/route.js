@@ -7,7 +7,7 @@ export async function GET(req, { params }) {
         userId: params.id,
       },
     });
-    
+
     return new Response(JSON.stringify(userShop), {
       status: 200, // Created
       headers: {
