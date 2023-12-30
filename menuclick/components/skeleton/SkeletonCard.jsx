@@ -2,10 +2,10 @@ import { Card, Skeleton } from "@nextui-org/react";
 
 const SkeletonCard = () => {
   return (
-    <Card className="w-[200px] space-y-5 p-4" radius="lg">
-      <Skeleton className="rounded-lg">
-        <div className="h-24 rounded-lg bg-default-300"></div>
-      </Skeleton>
+    <Card
+      className="flex flex-col justify-between rounded-xl  p-4 w-full h-full animation-div overflow-hidden"
+      radius="lg"
+    >
       <div className="space-y-3">
         <Skeleton className="w-3/5 rounded-lg">
           <div className="h-3 w-3/5 rounded-lg bg-default-200"></div>
@@ -21,16 +21,12 @@ const SkeletonCard = () => {
   );
 };
 
-const skeleton = [...Array(4).keys()].map((i) => {
+const skeleton = [...Array(5).keys()].map((i) => {
   return <SkeletonCard key={i} />;
 });
 
 const SkeletonLoading = () => {
-  return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 w-full">
-      <ul className="grid gap-6">{skeleton}</ul>
-    </div>
-  );
+  return <>{skeleton}</>;
 };
 
 export default SkeletonLoading;
