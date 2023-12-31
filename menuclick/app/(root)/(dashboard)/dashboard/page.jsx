@@ -13,11 +13,16 @@ import {
 } from "@heroicons/react/24/outline";
 import { useSession } from "next-auth/react";
 import { useUserShop } from "@/utils/hooks/useShop";
-import { Menu, Transition } from "@headlessui/react";
 import { useEffect, useState, Fragment } from "react";
+import { Transition, Popover } from "@headlessui/react";
 
 const DashBoard = () => {
   const { data: session } = useSession();
+  const {
+    data: fetchedData,
+    error,
+    isLoading: loading,
+  } = useUserShop({ userId: session?.user?.id });
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -25,8 +30,20 @@ const DashBoard = () => {
   const [editIsOpen, setEditIsOpen] = useState(false);
   const [deleteShop, setDeleteShop] = useState(false);
 
-  const [shop, setShop] = useState("");
+  const [shop, setShop] = useState(null);
   const [newShop, setNewShop] = useState("");
+  const [shopData, setShopData] = useState([]);
+
+  useEffect(() => {
+    if (fetchedData) {
+      setShopData(fetchedData);
+    }
+
+    if (error) {
+      console.error("Error :", error);
+      toast("Uh-oh! There was an issue fetching shop details");
+    }
+  }, [error, fetchedData]);
 
   const handleCreateBtn = async () => {
     setIsLoading(true);
@@ -63,8 +80,9 @@ const DashBoard = () => {
           toast.error(response.data);
         } else {
           toast.success("Successfully created");
-          window.location.href = "/dashboard";
+          //window.location.href = "/dashboard";
         }
+        setAddIsOpen(false);
       }
     } catch (error) {
       console.log(error.message);
@@ -86,10 +104,23 @@ const DashBoard = () => {
     }
   };
 
-  const handleDeleteBtn = () => {
+  const handleDeleteBtn = async () => {
     setIsLoading(true);
     try {
-      toast.success("You are successfully Deleted");
+      const response = await axios.delete("/api/shop", {
+        data: {
+          id: shop.id,
+        },
+      });
+      if (response.statusText === "FAILED") {
+        toast.error(response.data);
+      } else {
+        setNewShop((prevTableData) =>
+          prevTableData.filter((document) => document.id !== shop.id)
+        );
+        toast("Hooray! The Shop has been removed successfully.");
+      }
+      setDeleteShop(false);
     } catch (error) {
       console.log(error.message);
       toast.error("Something went wrong");
@@ -114,10 +145,12 @@ const DashBoard = () => {
       </div>
       <div className="flex-center w-full mt-3">
         <ShopCard
-          userID={session?.user?.id}
+          shopData={shopData}
           setAddIsOpen={setAddIsOpen}
           setEditIsOpen={setEditIsOpen}
           setDeleteShop={setDeleteShop}
+          setShop={setShop}
+          isLoading={loading}
         />
       </div>
       <ShopAddEditModal
@@ -154,94 +187,47 @@ const DashBoard = () => {
 
 export default DashBoard;
 
-const ShopCard = ({ userID, setAddIsOpen, setEditIsOpen, setDeleteShop }) => {
-  const [shop, setShop] = useState([]);
-
-  const {
-    data: fetchedData,
-    error,
-    isLoading: loading,
-  } = useUserShop({ userId: userID });
-
-  useEffect(() => {
-    if (fetchedData) {
-      setShop(fetchedData);
-    }
-
-    if (error) {
-      console.error("Error :", error);
-      toast("Uh-oh! There was an issue fetching shop details");
-    }
-  }, [error, fetchedData]);
-
+const ShopCard = ({
+  shopData,
+  setAddIsOpen,
+  setEditIsOpen,
+  setDeleteShop,
+  setShop,
+  isLoading,
+}) => {
   const styleShopCard = {
     card: "rounded-xl border-2 border-color p-4 w-full h-full animation-div overflow-hidden",
     h2: "font-semibold text-base sm:text-lg text-color",
+    h3: "text-xs text-gray-400",
     p: "sm:mt-1 block text-color text-sm",
-    menu: (active) =>
-      `${
-        active ? "bg-gray-200 dark:bg-gray-500  " : ""
-      } p-1 text-sm rounded-lg`,
+    menu: "hover:bg-gray-200 dark:hover:bg-gray-500 p-1 text-sm md:text-xs rounded-lg",
   };
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 w-full">
-      {loading ? (
+      {isLoading ? (
         <SkeletonLoading />
       ) : (
-        shop.map((data, index) => (
-          <Link key={index} href={`dashboard/${data.id}`}>
-            <div
-              className={`flex flex-col justify-between  ${styleShopCard.card}`}
-            >
-              <div className="flex justify-between items-center">
-                <h2 className={styleShopCard.h2}>{data.name}</h2>
-                <Menu as="div" className="relative">
-                  <Menu.Button className="relative flex rounded-full outline-none ">
-                    <EllipsisVerticalIcon className="icon" />
-                  </Menu.Button>
-                  <Transition
-                    as={Fragment}
-                    enter="transition ease-out duration-100"
-                    enterFrom="transform opacity-0 scale-95"
-                    enterTo="transform opacity-100 scale-100"
-                    leave="transition ease-in duration-75"
-                    leaveFrom="transform opacity-100 scale-100"
-                    leaveTo="transform opacity-0 scale-95"
-                  >
-                    <Menu.Items className="flex flex-col absolute right-0 z-10 mt-2 w-32 origin-top-right rounded-lg bg-white dark:bg-gray-800 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none p-1">
-                      <Menu.Item>
-                        {({ active }) => (
-                          <p
-                            className={styleShopCard.menu(active)}
-                            onClick={(e) => {
-                              setEditIsOpen(true);
-                            }}
-                          >
-                            Edit
-                          </p>
-                        )}
-                      </Menu.Item>
-                      <Menu.Item>
-                        {({ active }) => (
-                          <p
-                            className={styleShopCard.menu(active)}
-                            onClick={() => setDeleteShop(true)}
-                          >
-                            Delete
-                          </p>
-                        )}
-                      </Menu.Item>
-                    </Menu.Items>
-                  </Transition>
-                </Menu>
-              </div>
-              <p className={`sm:text-base  ${styleShopCard.p}`}>{data.about}</p>
+        shopData.map((data, index) => (
+          <div
+            key={index}
+            className={`flex flex-col justify-between  ${styleShopCard.card}`}
+          >
+            <PopOver
+              post={data}
+              setEditIsOpen={setEditIsOpen}
+              setDeleteShop={setDeleteShop}
+              styleShopCard={styleShopCard}
+              setShop={setShop}
+            />
+            <Link href={`dashboard/${data.id}`}>
+              <h2 className={styleShopCard.h2}>{data.name}</h2>
+              <p className={`sm:text-base ${styleShopCard.p}`}>{data.about}</p>
               <div className="flex justify-between">
-                <h3 className="text-xs text-gray-400">{data.email}</h3>
-                <h3 className="text-xs text-gray-300">{data.location}</h3>
+                <h3 className={styleShopCard.h3}>{data.email}</h3>
+                <h3 className={styleShopCard.h3}>{data.location}</h3>
               </div>
-            </div>
-          </Link>
+            </Link>
+          </div>
         ))
       )}
       <div
@@ -255,5 +241,51 @@ const ShopCard = ({ userID, setAddIsOpen, setEditIsOpen, setDeleteShop }) => {
         </p>
       </div>
     </div>
+  );
+};
+
+const PopOver = ({
+  post,
+  setEditIsOpen,
+  setDeleteShop,
+  styleShopCard,
+  setShop,
+}) => {
+  return (
+    <Popover as="div" className="relative">
+      <Popover.Button className="absolute right-0 flex rounded-full outline-none">
+        <EllipsisVerticalIcon className="icon" />
+      </Popover.Button>
+      <Transition
+        as={Fragment}
+        enter="transition ease-out duration-100"
+        enterFrom="transform opacity-0 scale-95"
+        enterTo="transform opacity-100 scale-100"
+        leave="transition ease-in duration-75"
+        leaveFrom="transform opacity-100 scale-100"
+        leaveTo="transform opacity-0 scale-95"
+      >
+        <Popover.Panel className="flex flex-col absolute right-0 z-10 mt-4 w-32 origin-top-right rounded-lg bg-white dark:bg-gray-800 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none p-1">
+          <p
+            className={styleShopCard.menu}
+            onClick={() => {
+              setShop(post);
+              setEditIsOpen(true);
+            }}
+          >
+            Edit
+          </p>
+          <p
+            className={styleShopCard.menu}
+            onClick={() => {
+              setShop(post);
+              setDeleteShop(true);
+            }}
+          >
+            Delete
+          </p>
+        </Popover.Panel>
+      </Transition>
+    </Popover>
   );
 };
