@@ -16,23 +16,133 @@ import { useUserShop } from "@/utils/hooks/useShop";
 import { useEffect, useState, Fragment } from "react";
 import { Transition, Popover } from "@headlessui/react";
 
+const ShopCard = ({
+  shopData,
+  setAddIsOpen,
+  setEditIsOpen,
+  setDeleteShop,
+  setShop,
+  isLoading,
+}) => {
+  const styleShopCard = {
+    card: "rounded-xl border-2 border-color p-4 w-full h-full animation-div overflow-hidden",
+    h2: "font-semibold text-base sm:text-lg text-color",
+    h3: "text-xs text-gray-400",
+    p: "sm:mt-1 block text-color text-sm",
+    menu: "hover:bg-gray-200 dark:hover:bg-gray-500 p-1 text-sm md:text-xs rounded-lg",
+  };
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 w-full">
+      {isLoading ? (
+        <SkeletonLoading />
+      ) : (
+        shopData.map((data, index) => (
+          <div
+            key={index}
+            className={`flex flex-col justify-between  ${styleShopCard.card}`}
+          >
+            <PopOver
+              post={data}
+              setEditIsOpen={setEditIsOpen}
+              setDeleteShop={setDeleteShop}
+              styleShopCard={styleShopCard}
+              setShop={setShop}
+            />
+            <Link href={`dashboard/${data.id}`}>
+              <h2 className={styleShopCard.h2}>{data.name}</h2>
+              <p className={`sm:text-base ${styleShopCard.p}`}>{data.about}</p>
+              <div className="flex justify-between">
+                <h3 className={styleShopCard.h3}>{data.email}</h3>
+                <h3 className={styleShopCard.h3}>{data.location}</h3>
+              </div>
+            </Link>
+          </div>
+        ))
+      )}
+      <div
+        className={`flex-center flex-col  ${styleShopCard.card}`}
+        onClick={() => setAddIsOpen(true)}
+      >
+        <SquaresPlusIcon className="h-8 text-color" />
+        <h2 className={styleShopCard.h2}>Add new shop</h2>
+        <p className={`text-center ${styleShopCard.p}`}>
+          Add a new restaurant to your digital menu
+        </p>
+      </div>
+    </div>
+  );
+};
+
+const PopOver = ({
+  post,
+  setEditIsOpen,
+  setDeleteShop,
+  styleShopCard,
+  setShop,
+}) => {
+  const handleEditBtn = (post) => {
+    setShop(post);
+    setEditIsOpen(true);
+  };
+
+  const handleDeleteBtn = (post) => {
+    setShop(post);
+    setDeleteShop(true);
+  };
+
+  return (
+    <Popover as="div" className="relative">
+      <Popover.Button className="absolute right-0 flex rounded-full outline-none">
+        <EllipsisVerticalIcon className="icon" />
+      </Popover.Button>
+      <Transition
+        as={Fragment}
+        enter="transition ease-out duration-100"
+        enterFrom="transform opacity-0 scale-95"
+        enterTo="transform opacity-100 scale-100"
+        leave="transition ease-in duration-75"
+        leaveFrom="transform opacity-100 scale-100"
+        leaveTo="transform opacity-0 scale-95"
+      >
+        <Popover.Panel className="flex flex-col absolute right-0 z-10 mt-4 w-32 origin-top-right rounded-lg bg-white dark:bg-gray-800 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none p-1">
+          <p className={styleShopCard.menu} onClick={() => handleEditBtn(post)}>
+            Edit
+          </p>
+          <p
+            className={styleShopCard.menu}
+            onClick={() => handleDeleteBtn(post)}
+          >
+            Delete
+          </p>
+        </Popover.Panel>
+      </Transition>
+    </Popover>
+  );
+};
+
 const DashBoard = () => {
+  // Retrieve user session information
   const { data: session } = useSession();
+  // Fetch user shop data
   const {
     data: fetchedData,
     error,
     isLoading: loading,
   } = useUserShop({ userId: session?.user?.id });
 
+  // State to manage loading state for various actions
   const [isLoading, setIsLoading] = useState(false);
 
+  // State for managing modals (Add, Edit, Delete)
   const [addIsOpen, setAddIsOpen] = useState(false);
   const [editIsOpen, setEditIsOpen] = useState(false);
   const [deleteShop, setDeleteShop] = useState(false);
 
+  // State for storing user shop data and selected shop for editing
   const [userShop, setUserShop] = useState(null);
   const [shopData, setShopData] = useState([]);
 
+  // Effect to update shop data and handle errors
   useEffect(() => {
     if (fetchedData) {
       setShopData(fetchedData);
@@ -44,6 +154,7 @@ const DashBoard = () => {
     }
   }, [error, fetchedData]);
 
+  // Function to handle shop create ,update and delete
   const handleCreateBtn = async (newShop) => {
     setIsLoading(true);
 
@@ -176,6 +287,7 @@ const DashBoard = () => {
 
   return (
     <div className="sm:mx-4 flex flex-col">
+      {/* Header */}
       <div className="flex justify-between w-full">
         <h1 className="text-3xl font-semibold">My Shops</h1>
         <button
@@ -189,6 +301,7 @@ const DashBoard = () => {
         </button>
       </div>
       <div className="flex-center w-full mt-3">
+        {/* ShopCard Component */}
         <ShopCard
           shopData={shopData}
           setAddIsOpen={setAddIsOpen}
@@ -198,6 +311,7 @@ const DashBoard = () => {
           isLoading={loading}
         />
       </div>
+      {/* Modals */}
       <ShopAddEditModal
         isOpen={addIsOpen}
         setIsOpen={setAddIsOpen}
@@ -229,107 +343,3 @@ const DashBoard = () => {
 };
 
 export default DashBoard;
-
-const ShopCard = ({
-  shopData,
-  setAddIsOpen,
-  setEditIsOpen,
-  setDeleteShop,
-  setShop,
-  isLoading,
-}) => {
-  const styleShopCard = {
-    card: "rounded-xl border-2 border-color p-4 w-full h-full animation-div overflow-hidden",
-    h2: "font-semibold text-base sm:text-lg text-color",
-    h3: "text-xs text-gray-400",
-    p: "sm:mt-1 block text-color text-sm",
-    menu: "hover:bg-gray-200 dark:hover:bg-gray-500 p-1 text-sm md:text-xs rounded-lg",
-  };
-  return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 w-full">
-      {isLoading ? (
-        <SkeletonLoading />
-      ) : (
-        shopData.map((data, index) => (
-          <div
-            key={index}
-            className={`flex flex-col justify-between  ${styleShopCard.card}`}
-          >
-            <PopOver
-              post={data}
-              setEditIsOpen={setEditIsOpen}
-              setDeleteShop={setDeleteShop}
-              styleShopCard={styleShopCard}
-              setShop={setShop}
-            />
-            <Link href={`dashboard/${data.id}`}>
-              <h2 className={styleShopCard.h2}>{data.name}</h2>
-              <p className={`sm:text-base ${styleShopCard.p}`}>{data.about}</p>
-              <div className="flex justify-between">
-                <h3 className={styleShopCard.h3}>{data.email}</h3>
-                <h3 className={styleShopCard.h3}>{data.location}</h3>
-              </div>
-            </Link>
-          </div>
-        ))
-      )}
-      <div
-        className={`flex-center flex-col  ${styleShopCard.card}`}
-        onClick={() => setAddIsOpen(true)}
-      >
-        <SquaresPlusIcon className="h-8 text-color" />
-        <h2 className={styleShopCard.h2}>Add new shop</h2>
-        <p className={`text-center ${styleShopCard.p}`}>
-          Add a new restaurant to your digital menu
-        </p>
-      </div>
-    </div>
-  );
-};
-
-const PopOver = ({
-  post,
-  setEditIsOpen,
-  setDeleteShop,
-  styleShopCard,
-  setShop,
-}) => {
-  const handleEditBtn = (post) => {
-    setShop(post);
-    setEditIsOpen(true);
-  };
-
-  const handleDeleteBtn = (post) => {
-    setShop(post);
-    setDeleteShop(true);
-  };
-
-  return (
-    <Popover as="div" className="relative">
-      <Popover.Button className="absolute right-0 flex rounded-full outline-none">
-        <EllipsisVerticalIcon className="icon" />
-      </Popover.Button>
-      <Transition
-        as={Fragment}
-        enter="transition ease-out duration-100"
-        enterFrom="transform opacity-0 scale-95"
-        enterTo="transform opacity-100 scale-100"
-        leave="transition ease-in duration-75"
-        leaveFrom="transform opacity-100 scale-100"
-        leaveTo="transform opacity-0 scale-95"
-      >
-        <Popover.Panel className="flex flex-col absolute right-0 z-10 mt-4 w-32 origin-top-right rounded-lg bg-white dark:bg-gray-800 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none p-1">
-          <p className={styleShopCard.menu} onClick={() => handleEditBtn(post)}>
-            Edit
-          </p>
-          <p
-            className={styleShopCard.menu}
-            onClick={() => handleDeleteBtn(post)}
-          >
-            Delete
-          </p>
-        </Popover.Panel>
-      </Transition>
-    </Popover>
-  );
-};
