@@ -16,19 +16,16 @@ const ShopAddEditModal = ({
   data,
   setData,
 }) => {
-  console.log(data);
   const [formData, setFormData] = useState({
     name: "",
     about: "",
     email: "",
     phonenumber: "",
     location: "",
-    ...data,
   });
 
   useEffect(() => {
     setData(formData);
-    setFormData((prevData) => ({ ...prevData, ...data }));
   }, [setData, formData, data]);
 
   const handleInputChange = (e) => {
