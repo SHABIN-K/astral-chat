@@ -11,10 +11,9 @@ const ShopAddEditModal = ({
   setIsOpen,
   title,
   btnLabel,
-  handleBtn,
+  onSave,
   isLoading,
   data,
-  setData,
 }) => {
   const [formData, setFormData] = useState({
     name: "",
@@ -22,12 +21,32 @@ const ShopAddEditModal = ({
     email: "",
     phonenumber: "",
     location: "",
-    ...data,
   });
 
   useEffect(() => {
-    setData(formData);
-  }, [setData, formData]);
+    if (data) {
+      console.log(data);
+      setFormData({
+        name: data?.name || "",
+        about: data?.about || "",
+        email: data?.email || "",
+        phonenumber: data?.phoneNumber || "",
+        location: data?.location || "",
+      });
+    } else {
+      setFormData({
+        name: "",
+        about: "",
+        email: "",
+        phonenumber: "",
+        location: "",
+      });
+    }
+  }, [data]);
+
+  const handleSave = () => {
+    onSave(formData);
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -37,6 +56,7 @@ const ShopAddEditModal = ({
   function closeModal() {
     setIsOpen(false);
   }
+  
   return (
     <Transition appear show={isOpen} as={Fragment}>
       <Dialog as="div" className="relative z-10" onClose={closeModal}>
@@ -148,7 +168,7 @@ const ShopAddEditModal = ({
                       )
                     }
                     secondaryLabel="cancel"
-                    onPrimaryClick={handleBtn}
+                    onPrimaryClick={handleSave}
                     onSecondaryClick={closeModal}
                   />
                 </div>

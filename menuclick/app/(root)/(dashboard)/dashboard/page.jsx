@@ -30,8 +30,7 @@ const DashBoard = () => {
   const [editIsOpen, setEditIsOpen] = useState(false);
   const [deleteShop, setDeleteShop] = useState(false);
 
-  const [shop, setShop] = useState(null);
-  const [newShop, setNewShop] = useState("");
+  const [userShop, setUserShop] = useState(null);
   const [shopData, setShopData] = useState([]);
 
   useEffect(() => {
@@ -45,7 +44,7 @@ const DashBoard = () => {
     }
   }, [error, fetchedData]);
 
-  const handleCreateBtn = async () => {
+  const handleCreateBtn = async (newShop) => {
     setIsLoading(true);
 
     const userInput = {
@@ -80,7 +79,7 @@ const DashBoard = () => {
           toast.error(response.data);
         } else {
           setShopData((data) => [...data, response.data]);
-          toast.success("Successfully created");
+          toast("Hooray! You've successfully added a new shop ");
           //window.location.href = "/dashboard";
         }
         setAddIsOpen(false);
@@ -93,14 +92,60 @@ const DashBoard = () => {
     }
   };
 
-  const handleUpdateBtn = () => {
+  const handleUpdateBtn = async (editShop) => {
     setIsLoading(true);
+
+    const userInput = {
+      name: editShop.name,
+      about: editShop.about,
+      email: editShop.email,
+      phoneNumber: editShop.phonenumber,
+      location: editShop.location,
+    };
+
     try {
-      toast.success("You are successfully edited");
+      // Validate the user input
+      const validation = ShopValidation.addShop.safeParse(userInput);
+      //if validation is failure, return error message
+      if (validation.success === false) {
+        const { issues } = validation.error;
+        issues.forEach((err) => {
+          toast.error(err.message);
+        });
+      } else {
+        // If validation is successful, make the API request
+        const response = await axios.patch("/api/shop", {
+          shopId: userShop.id,
+          name: editShop.name,
+          about: editShop.about,
+          email: editShop.email,
+          phoneNumber: editShop.phonenumber,
+          location: editShop.location,
+        });
+        if (response.statusText === "FAILED") {
+          toast.error(response.data);
+        } else {
+          let updatedShop = response.data;
+          let shopIndex = shopData.findIndex(
+            (shopPost) => shopPost.id === updatedShop.id
+          );
+          if (shopIndex !== -1) {
+            setShopData((data) => {
+              const updatedShopData = [...data];
+              updatedShopData[shopIndex] = updatedShop;
+              return updatedShopData;
+            });
+          }
+          toast("Success! Your changes have been saved.");
+          //window.location.href = "/dashboard";
+        }
+        setEditIsOpen(false);
+      }
     } catch (error) {
       console.log(error.message);
       toast.error("Something went wrong");
     } finally {
+      setUserShop(null);
       setIsLoading(false);
     }
   };
@@ -110,13 +155,13 @@ const DashBoard = () => {
     try {
       const response = await axios.delete("/api/shop", {
         data: {
-          id: shop.id,
+          id: userShop.id,
         },
       });
       if (response.statusText === "FAILED") {
         toast.error(response.data);
       } else {
-        setShopData((data) => data.filter((post) => post.id !== shop.id));
+        setShopData((data) => data.filter((post) => post.id !== userShop.id));
         toast("Hooray! The Shop has been removed successfully.");
       }
       setDeleteShop(false);
@@ -124,6 +169,7 @@ const DashBoard = () => {
       console.log(error.message);
       toast.error("Something went wrong");
     } finally {
+      setUserShop(null);
       setIsLoading(false);
     }
   };
@@ -148,7 +194,7 @@ const DashBoard = () => {
           setAddIsOpen={setAddIsOpen}
           setEditIsOpen={setEditIsOpen}
           setDeleteShop={setDeleteShop}
-          setShop={setShop}
+          setShop={setUserShop}
           isLoading={loading}
         />
       </div>
@@ -157,23 +203,19 @@ const DashBoard = () => {
         setIsOpen={setAddIsOpen}
         title="Add Shop"
         btnLabel="save"
-        handleBtn={handleCreateBtn}
+        onSave={handleCreateBtn}
         isLoading={isLoading}
-        setData={setNewShop}
       />
 
-      {editIsOpen && (
-        <ShopAddEditModal
-          isOpen={editIsOpen}
-          setIsOpen={setEditIsOpen}
-          title="Edit Shop"
-          btnLabel="save"
-          handleBtn={handleUpdateBtn}
-          isLoading={isLoading}
-          initialData={shop}
-          setData={setShop}
-        />
-      )}
+      <ShopAddEditModal
+        isOpen={editIsOpen}
+        setIsOpen={setEditIsOpen}
+        title="Edit Shop"
+        btnLabel="save"
+        onSave={handleUpdateBtn}
+        isLoading={isLoading}
+        data={userShop}
+      />
       <ConfirmModal
         isOpen={deleteShop}
         setIsOpen={setDeleteShop}
