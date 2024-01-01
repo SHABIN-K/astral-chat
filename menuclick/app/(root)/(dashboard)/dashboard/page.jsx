@@ -162,16 +162,18 @@ const DashBoard = () => {
         setData={setNewShop}
       />
 
-      <ShopAddEditModal
-        isOpen={editIsOpen}
-        setIsOpen={setEditIsOpen}
-        title="Edit Shop"
-        btnLabel="save"
-        handleBtn={handleUpdateBtn}
-        isLoading={isLoading}
-        data={shop}
-        setData={setShop}
-      />
+      {editIsOpen && (
+        <ShopAddEditModal
+          isOpen={editIsOpen}
+          setIsOpen={setEditIsOpen}
+          title="Edit Shop"
+          btnLabel="save"
+          handleBtn={handleUpdateBtn}
+          isLoading={isLoading}
+          initialData={shop}
+          setData={setShop}
+        />
+      )}
       <ConfirmModal
         isOpen={deleteShop}
         setIsOpen={setDeleteShop}
