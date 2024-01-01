@@ -18,7 +18,7 @@
 
 /*color*/
 .text-color {
-  @apply text-gray-900 dark:text-white;
+  @apply text-black dark:text-white;
 }
 
 .bg-color {
@@ -26,11 +26,44 @@
 }
 
 .text-btncolor {
-  @apply text-white dark:text-gray-900;
+  @apply text-white dark:text-black;
 }
 
 .bg-btncolor {
-  @apply text-gray-900 dark:bg-white;
+  @apply bg-black dark:bg-white;
 }
 
+.border-color {
+  @apply border-gray-600 dark:border-slate-800;
+}
 /*color*/
+
+/* Form desgin*/
+.btn_form {
+  @apply inline-flex justify-center rounded-2xl border border-transparent bg-btncolor px-4 py-1.5 text-sm font-medium text-btncolor hover:bg-gray-500 dark:hover:text-white focus:outline-none;
+}
+
+.input_form {
+  @apply bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 outline-none text-color text-sm rounded-lg block w-full p-1.5;
+}
+
+.label_form {
+  @apply text-gray-400 text-sm font-medium;
+}
+/* Form desgin*/
+
+.flex-center {
+  @apply flex items-center justify-center;
+}
+
+.flex-start {
+  @apply flex items-start justify-start;
+}
+
+.animation-div {
+  @apply hover:scale-105 transition duration-500;
+}
+
+.icon {
+  @apply w-6 text-color rounded-full p-1 hover:bg-gray-50 dark:hover:bg-gray-700 text-lg  cursor-pointer;
+}
