@@ -2,11 +2,11 @@
 
 import { Fragment } from "react";
 import { Transition, Popover } from "@headlessui/react";
-import { EllipsisVerticalIcon } from "@heroicons/react/24/outline";
+import { PencilSquareIcon, TrashIcon } from "@heroicons/react/24/outline";
 
 import { useDeleteModalStore, useEditModalStore } from "@/utils/state";
 
-const PopOver = ({ post, setShop }) => {
+const PopOver = ({ post, setShop, button, buttonStyle }) => {
   const { onOpen: editOpen } = useEditModalStore();
   const { onOpen: deleteOpen } = useDeleteModalStore();
 
@@ -21,14 +21,12 @@ const PopOver = ({ post, setShop }) => {
   };
 
   const stylePopover = {
-    menu: "hover:bg-gray-200 dark:hover:bg-gray-500 p-1 text-sm md:text-xs rounded-lg",
+    menu: "hover:bg-gray-200 dark:hover:bg-gray-500 p-1 text-sm md:text-xs rounded-lg flex items-center",
   };
 
   return (
     <Popover as="div" className="relative">
-      <Popover.Button className="absolute right-0 flex rounded-full outline-none">
-        <EllipsisVerticalIcon className="icon" />
-      </Popover.Button>
+      <Popover.Button className={buttonStyle}>{button}</Popover.Button>
       <Transition
         as={Fragment}
         enter="transition ease-out duration-100"
@@ -40,13 +38,13 @@ const PopOver = ({ post, setShop }) => {
       >
         <Popover.Panel className="flex flex-col absolute right-0 z-10 mt-4 w-32 origin-top-right rounded-lg bg-white dark:bg-gray-800 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none p-1">
           <p className={stylePopover.menu} onClick={() => handleEditBtn(post)}>
-            Edit
+            <PencilSquareIcon className="icon" /> <span>Edit</span>
           </p>
           <p
             className={stylePopover.menu}
             onClick={() => handleDeleteBtn(post)}
           >
-            Delete
+            <TrashIcon className="icon" /> <span>Delete</span>
           </p>
         </Popover.Panel>
       </Transition>

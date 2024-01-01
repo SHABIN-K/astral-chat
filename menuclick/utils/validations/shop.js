@@ -15,7 +15,7 @@ const Shop = z.object({
       required_error: "about is required.",
       invalid_type_error: "about must be a string.",
     })
-    .min(10, { message: "about must be at least 10 characters long." })
+    .min(20, { message: "about must be at least 20 characters long." })
     .max(70, {
       message: "about can only be up to 70 characters long.",
     }),

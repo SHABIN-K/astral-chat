@@ -14,9 +14,12 @@ import { ConfirmModal, ShopAddEditModal } from "@/components/modal";
 import axios from "axios";
 import Link from "next/link";
 import { toast } from "sonner";
+import {
+  SquaresPlusIcon,
+  EllipsisVerticalIcon,
+} from "@heroicons/react/24/outline";
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
-import { SquaresPlusIcon } from "@heroicons/react/24/outline";
 
 const ShopCard = ({ shopData, setAddIsOpen, setShop, isLoading }) => {
   const styleShopCard = {
@@ -33,9 +36,14 @@ const ShopCard = ({ shopData, setAddIsOpen, setShop, isLoading }) => {
         shopData.map((data, index) => (
           <div
             key={index}
-            className={`flex flex-col justify-between  ${styleShopCard.card}`}
+            className={`flex flex-col justify-items-stretch ${styleShopCard.card}`}
           >
-            <PopOver post={data} setShop={setShop} />
+            <PopOver
+              post={data}
+              setShop={setShop}
+              button={<EllipsisVerticalIcon className="icon" />}
+              buttonStyle="absolute right-0 flex rounded-full outline-none"
+            />
             <Link href={`dashboard/${data.id}`}>
               <h2 className={styleShopCard.h2}>{data.name}</h2>
               <p className={`sm:text-base ${styleShopCard.p}`}>{data.about}</p>
