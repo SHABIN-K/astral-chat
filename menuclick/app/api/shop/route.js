@@ -57,3 +57,68 @@ export async function DELETE(req) {
     });
   }
 }
+
+export async function PATCH(req) {
+  const { id, userRole, name, email, phoneNumber } = await req.json();
+  try {
+    // Check if a user already exists by email
+    const existingUser = await prisma.user.findFirst({
+      where: { id: id },
+    });
+
+    // Check if any data has changed
+    const hasDataChanged =
+      existingUser.userRole !== userRole ||
+      existingUser.name !== name ||
+      existingUser.email !== email ||
+      existingUser.phoneNumber !== phoneNumber;
+
+    if (!hasDataChanged) {
+      return new Response("No changes were made", {
+        status: 200, // OK
+        statusText: "FAILED",
+      });
+    }
+
+    // Check if another user with the same email exists
+    const otherUserWithSameEmail = await prisma.user.findFirst({
+      where: {
+        email: email,
+        id: {
+          not: id,
+        },
+      },
+    });
+
+    if (otherUserWithSameEmail) {
+      return new Response("User with this email already exists", {
+        status: 200,
+        statusText: "FAILED",
+      });
+    }
+
+    // update the user
+    const updateUser = await prisma.user.update({
+      where: { id: id },
+      data: {
+        userRole: userRole,
+        name,
+        email,
+        phoneNumber,
+      },
+    });
+
+    return new Response(JSON.stringify(updateUser), {
+      status: 201, // Created
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+  } catch (error) {
+    console.error("Error processing the request:", error);
+
+    return new Response("An error occurred", {
+      status: 500, // Internal Server Error
+    });
+  }
+}

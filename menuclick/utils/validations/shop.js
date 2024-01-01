@@ -7,8 +7,8 @@ const Shop = z.object({
       invalid_type_error: "Name must be a string.",
     })
     .min(1, { message: "Name is required." })
-    .max(50, {
-      message: "Name can only be up to 50 characters long..",
+    .max(30, {
+      message: "Name can only be up to 30 characters long..",
     }),
   about: z
     .string({
@@ -16,7 +16,7 @@ const Shop = z.object({
       invalid_type_error: "about must be a string.",
     })
     .min(10, { message: "about must be at least 10 characters long." })
-    .max(500, {
+    .max(70, {
       message: "about can only be up to 70 characters long.",
     }),
   email: z
