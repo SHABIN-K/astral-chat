@@ -1,4 +1,5 @@
 import { Empty } from "./Empty";
+import PopOver from "./PopOver";
 import FormInput from "./FormInput";
 import Background from "./Background";
 import FormButtons from "./FormButtons";
@@ -6,11 +7,12 @@ import ThemeSwitcher from "./ThemeSwitcher";
 import Loader, { WaitingLoader } from "./Loader";
 
 export {
-  Background,
   Empty,
   Loader,
-  ThemeSwitcher,
-  WaitingLoader,
+  PopOver,
   FormInput,
+  Background,
   FormButtons,
+  WaitingLoader,
+  ThemeSwitcher,
 };
