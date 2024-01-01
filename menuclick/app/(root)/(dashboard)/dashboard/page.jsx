@@ -79,6 +79,7 @@ const DashBoard = () => {
         if (response.statusText === "FAILED") {
           toast.error(response.data);
         } else {
+          setShopData((data) => [...data, response.data]);
           toast.success("Successfully created");
           //window.location.href = "/dashboard";
         }
@@ -115,9 +116,7 @@ const DashBoard = () => {
       if (response.statusText === "FAILED") {
         toast.error(response.data);
       } else {
-        setNewShop((prevTableData) =>
-          prevTableData.filter((document) => document.id !== shop.id)
-        );
+        setShopData((data) => data.filter((post) => post.id !== shop.id));
         toast("Hooray! The Shop has been removed successfully.");
       }
       setDeleteShop(false);
@@ -251,6 +250,16 @@ const PopOver = ({
   styleShopCard,
   setShop,
 }) => {
+  const handleEditBtn = (post) => {
+    setShop(post);
+    setEditIsOpen(true);
+  };
+
+  const handleDeleteBtn = (post) => {
+    setShop(post);
+    setDeleteShop(true);
+  };
+
   return (
     <Popover as="div" className="relative">
       <Popover.Button className="absolute right-0 flex rounded-full outline-none">
@@ -266,21 +275,12 @@ const PopOver = ({
         leaveTo="transform opacity-0 scale-95"
       >
         <Popover.Panel className="flex flex-col absolute right-0 z-10 mt-4 w-32 origin-top-right rounded-lg bg-white dark:bg-gray-800 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none p-1">
-          <p
-            className={styleShopCard.menu}
-            onClick={() => {
-              setShop(post);
-              setEditIsOpen(true);
-            }}
-          >
+          <p className={styleShopCard.menu} onClick={() => handleEditBtn(post)}>
             Edit
           </p>
           <p
             className={styleShopCard.menu}
-            onClick={() => {
-              setShop(post);
-              setDeleteShop(true);
-            }}
+            onClick={() => handleDeleteBtn(post)}
           >
             Delete
           </p>
