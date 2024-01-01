@@ -39,7 +39,6 @@ export async function POST(req) {
 
 export async function DELETE(req) {
   const { id } = await req.json();
-  console.log(id);
   try {
     await prisma.shop.delete({
       where: { id: id },
