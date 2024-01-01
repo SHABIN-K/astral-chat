@@ -22,11 +22,12 @@ const ShopAddEditModal = ({
     email: "",
     phonenumber: "",
     location: "",
+    ...data,
   });
 
   useEffect(() => {
     setData(formData);
-  }, [setData, formData, data]);
+  }, [setData, formData]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -36,7 +37,6 @@ const ShopAddEditModal = ({
   function closeModal() {
     setIsOpen(false);
   }
-
   return (
     <Transition appear show={isOpen} as={Fragment}>
       <Dialog as="div" className="relative z-10" onClose={closeModal}>
