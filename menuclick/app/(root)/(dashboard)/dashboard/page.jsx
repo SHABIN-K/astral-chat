@@ -1,5 +1,6 @@
 "use client";
 
+import { useShopStore } from "@/utils/state/use-Post";
 import { ShopValidation } from "@/utils/validations/shop";
 import SkeletonLoading from "@/components/skeleton/SkeletonCard";
 import { ConfirmModal, ShopAddEditModal } from "@/components/modal";
@@ -121,6 +122,8 @@ const PopOver = ({
 };
 
 const DashBoard = () => {
+  //for global state mangement
+  const { setShops } = useShopStore();
   // Retrieve user session information
   const { data: session } = useSession();
   // Fetch user shop data
@@ -153,6 +156,11 @@ const DashBoard = () => {
       toast("Uh-oh! There was an issue fetching shop details");
     }
   }, [error, fetchedData]);
+
+  //storing shop gloabally
+  useEffect(() => {
+    setShops(shopData);
+  }, [setShops, shopData]);
 
   // Function to handle shop create ,update and delete
   const handleCreateBtn = async (newShop) => {
