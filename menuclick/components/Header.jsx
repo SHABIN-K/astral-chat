@@ -10,9 +10,9 @@ import { Fragment, useState, useEffect, useRef } from "react";
 
 import { ThemeSwitcher } from "./ui";
 import { ConfirmModal } from "./modal";
+import { onSignOut } from "@/utils/tools";
 import { Avathar, Logo } from "@/public/assets";
 import { navItems, navlinks } from "@/utils/constants";
-import { handleSignOutButton } from "@/utils/tools/useSignOut";
 
 const Header = () => {
   const router = useRouter();
@@ -164,11 +164,11 @@ const Header = () => {
       </div>
       <ConfirmModal
         isOpen={isOpen}
-        setIsOpen={setIsOpen}
+        onClose={setIsOpen}
+        onConfirm={() => onSignOut(setIsLoading)}
+        isLoading={isLoading}
         title="Sign out"
         btnLabel="Sign out"
-        handleConfirmBtn={() => handleSignOutButton(setIsLoading, setIsOpen)}
-        isLoading={isLoading}
       />
     </nav>
   );

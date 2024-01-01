@@ -6,6 +6,7 @@ import {
   useDeleteModalStore,
 } from "@/utils/state";
 import { PopOver } from "@/components/ui";
+import { onDelete, onUpdate } from "@/utils/tools";
 import { useUserShop } from "@/utils/hooks/useShop";
 import { SkeletonLoading } from "@/components/skeleton";
 import { ShopValidation } from "@/utils/validations/shop";
@@ -149,86 +150,20 @@ const DashBoard = () => {
     }
   };
 
-  const handleUpdateBtn = async (editShop) => {
-    setIsLoading(true);
-
-    const userInput = {
-      name: editShop.name,
-      about: editShop.about,
-      email: editShop.email,
-      phoneNumber: editShop.phonenumber,
-      location: editShop.location,
-    };
-
-    try {
-      // Validate the user input
-      const validation = ShopValidation.addShop.safeParse(userInput);
-      //if validation is failure, return error message
-      if (validation.success === false) {
-        const { issues } = validation.error;
-        issues.forEach((err) => {
-          toast.error(err.message);
-        });
-      } else {
-        // If validation is successful, make the API request
-        const response = await axios.patch("/api/shop", {
-          shopId: userShop.id,
-          name: editShop.name,
-          about: editShop.about,
-          email: editShop.email,
-          phoneNumber: editShop.phonenumber,
-          location: editShop.location,
-        });
-        if (response.statusText === "FAILED") {
-          toast.error(response.data);
-        } else {
-          let updatedShop = response.data;
-          let shopIndex = shopData.findIndex(
-            (shopPost) => shopPost.id === updatedShop.id
-          );
-          if (shopIndex !== -1) {
-            setShopData((data) => {
-              const updatedShopData = [...data];
-              updatedShopData[shopIndex] = updatedShop;
-              return updatedShopData;
-            });
-          }
-          toast("Success! Your changes have been saved.");
-          //window.location.href = "/dashboard";
-        }
-        editClose(false);
-      }
-    } catch (error) {
-      console.log(error.message);
-      toast.error("Something went wrong");
-    } finally {
-      setUserShop(null);
-      setIsLoading(false);
-    }
+  const handleUpdateBtn = (editShop) => {
+    onUpdate(
+      editShop,
+      setIsLoading,
+      userShop,
+      shopData,
+      setShopData,
+      editClose,
+      setUserShop
+    );
   };
 
-  const handleDeleteBtn = async () => {
-    setIsLoading(true);
-    try {
-      const response = await axios.delete("/api/shop", {
-        data: {
-          id: userShop.id,
-        },
-      });
-      if (response.statusText === "FAILED") {
-        toast.error(response.data);
-      } else {
-        setShopData((data) => data.filter((post) => post.id !== userShop.id));
-        toast("Hooray! The Shop has been removed successfully.");
-      }
-      deleteClose(false);
-    } catch (error) {
-      console.log(error.message);
-      toast.error("Something went wrong");
-    } finally {
-      setUserShop(null);
-      setIsLoading(false);
-    }
+  const handleDeleteBtn = () => {
+    onDelete(setIsLoading, userShop, setShopData, deleteClose, setUserShop);
   };
 
   return (

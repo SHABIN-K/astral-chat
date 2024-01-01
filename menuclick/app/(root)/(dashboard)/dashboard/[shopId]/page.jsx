@@ -1,20 +1,17 @@
 "use client";
-import { Loader } from "@/components/ui";
-import { useShopStore } from "@/utils/state/use-Post";
-import { useEditModalStore } from "@/utils/state/use-modal";
 
-import React, { useEffect } from "react";
+import { Loader, PopOver } from "@/components/ui";
+import { useShopStore } from "@/utils/state/use-Post";
+import { ConfirmModal, ShopAddEditModal } from "@/components/modal";
+import { useDeleteModalStore, useEditModalStore } from "@/utils/state";
+
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { EllipsisHorizontalIcon } from "@heroicons/react/24/outline";
 
 const UserShop = ({ params }) => {
   const router = useRouter();
   const { shops } = useShopStore();
-  const { isOpen, onOpen, onClose } = useEditModalStore();
-
-  console.log(isOpen);
-  const [isEffect, setIsEffect] = React.useState(false);
-  const [currentShop, setCurrentShop] = React.useState(null);
 
   useEffect(() => {
     // Check if the provided shop ID is not in the array of shop IDs
@@ -30,9 +27,14 @@ const UserShop = ({ params }) => {
     }
   }, [params.shopId, router, shops]);
 
-  const handleBtn = () => {
-    console.log("hello shabin");
-  };
+  const { isOpen: editOpen, onClose: editClose } = useEditModalStore();
+  const { isOpen: deleteOpen, onClose: deleteClose } = useDeleteModalStore();
+
+  const [isLoading, setIsLoading] = useState(false);
+
+  const [isEffect, setIsEffect] = useState(false);
+  const [currentShop, setCurrentShop] = useState(null);
+
   return (
     <>
       {isEffect ? (
@@ -41,8 +43,8 @@ const UserShop = ({ params }) => {
           <div className="flex justify-between w-full">
             <h1 className="text-lg font-medium">{currentShop.name}</h1>
             <div className="flex">
+              <PopOver post={currentShop} setShop={setCurrentShop} />
               <button
-                onClick={handleBtn}
                 type="button"
                 className="bg-black dark:bg-white rounded-md px-3 hover:shadow-lg animation-div"
               >
@@ -56,6 +58,25 @@ const UserShop = ({ params }) => {
       ) : (
         <Loader />
       )}
+
+      <ShopAddEditModal
+        isOpen={editOpen}
+        onClose={editClose}
+        onSave={handleUpdateBtn}
+        isLoading={isLoading}
+        title="Edit Shop"
+        btnLabel="save"
+        data={currentShop}
+      />
+
+      <ConfirmModal
+        isOpen={deleteOpen}
+        onClose={deleteClose}
+        onConfirm={handleDeleteBtn}
+        isLoading={isLoading}
+        title="Delete Shop"
+        btnLabel="Confirm"
+      />
     </>
   );
 };

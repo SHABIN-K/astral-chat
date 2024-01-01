@@ -25,7 +25,6 @@ const ShopAddEditModal = ({
 
   useEffect(() => {
     if (data) {
-      console.log(data);
       setFormData({
         name: data?.name || "",
         about: data?.about || "",
