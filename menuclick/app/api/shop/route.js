@@ -5,15 +5,10 @@ export async function POST(req) {
     await req.json();
 
   try {
-    //find user by user id
-    const user = await prisma.User.findFirst({
-      where: { id: userID },
-    });
-
     // Create the new Shop
     const newShop = await prisma.shop.create({
       data: {
-        userId: user.id,
+        userId: userID,
         name: name.trim(),
         about: about.trim(),
         email,
@@ -39,7 +34,6 @@ export async function POST(req) {
 
 export async function DELETE(req) {
   const { id } = await req.json();
-  console.log(id);
   try {
     await prisma.shop.delete({
       where: { id: id },
@@ -59,19 +53,20 @@ export async function DELETE(req) {
 }
 
 export async function PATCH(req) {
-  const { id, userRole, name, email, phoneNumber } = await req.json();
+  const { shopId, name, about, email, phoneNumber, location } =
+    await req.json();
   try {
-    // Check if a user already exists by email
-    const existingUser = await prisma.user.findFirst({
-      where: { id: id },
+    const findShop = await prisma.shop.findFirst({
+      where: { id: shopId },
     });
 
     // Check if any data has changed
     const hasDataChanged =
-      existingUser.userRole !== userRole ||
-      existingUser.name !== name ||
-      existingUser.email !== email ||
-      existingUser.phoneNumber !== phoneNumber;
+      findShop.name !== name ||
+      findShop.about !== about ||
+      findShop.email !== email ||
+      findShop.phoneNumber !== phoneNumber ||
+      findShop.location !== location;
 
     if (!hasDataChanged) {
       return new Response("No changes were made", {
@@ -80,31 +75,15 @@ export async function PATCH(req) {
       });
     }
 
-    // Check if another user with the same email exists
-    const otherUserWithSameEmail = await prisma.user.findFirst({
-      where: {
-        email: email,
-        id: {
-          not: id,
-        },
-      },
-    });
-
-    if (otherUserWithSameEmail) {
-      return new Response("User with this email already exists", {
-        status: 200,
-        statusText: "FAILED",
-      });
-    }
-
-    // update the user
-    const updateUser = await prisma.user.update({
-      where: { id: id },
+    // update the Shop
+    const updateUser = await prisma.shop.update({
+      where: { id: findShop.id },
       data: {
-        userRole: userRole,
         name,
+        about,
         email,
         phoneNumber,
+        location,
       },
     });
 

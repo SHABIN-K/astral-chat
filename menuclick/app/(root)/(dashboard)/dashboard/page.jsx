@@ -16,176 +16,6 @@ import { useUserShop } from "@/utils/hooks/useShop";
 import { useEffect, useState, Fragment } from "react";
 import { Transition, Popover } from "@headlessui/react";
 
-const DashBoard = () => {
-  const { data: session } = useSession();
-  const {
-    data: fetchedData,
-    error,
-    isLoading: loading,
-  } = useUserShop({ userId: session?.user?.id });
-
-  const [isLoading, setIsLoading] = useState(false);
-
-  const [addIsOpen, setAddIsOpen] = useState(false);
-  const [editIsOpen, setEditIsOpen] = useState(false);
-  const [deleteShop, setDeleteShop] = useState(false);
-
-  const [shop, setShop] = useState(null);
-  const [newShop, setNewShop] = useState("");
-  const [shopData, setShopData] = useState([]);
-
-  useEffect(() => {
-    if (fetchedData) {
-      setShopData(fetchedData);
-    }
-
-    if (error) {
-      console.error("Error :", error);
-      toast("Uh-oh! There was an issue fetching shop details");
-    }
-  }, [error, fetchedData]);
-
-  const handleCreateBtn = async () => {
-    setIsLoading(true);
-
-    const userInput = {
-      name: newShop.name,
-      about: newShop.about,
-      email: newShop.email,
-      phoneNumber: newShop.phonenumber,
-      location: newShop.location,
-    };
-
-    try {
-      // Validate the user input
-      const validation = ShopValidation.addShop.safeParse(userInput);
-
-      //if validation is failure, return error message
-      if (validation.success === false) {
-        const { issues } = validation.error;
-        issues.forEach((err) => {
-          toast.error(err.message);
-        });
-      } else {
-        // If validation is successful, make the API request
-        const response = await axios.post("/api/shop", {
-          userID: session.user.id,
-          name: newShop.name,
-          about: newShop.about,
-          email: newShop.email,
-          phoneNumber: newShop.phonenumber,
-          location: newShop.location,
-        });
-        if (response.statusText === "FAILED") {
-          toast.error(response.data);
-        } else {
-          setShopData((data) => [...data, response.data]);
-          toast.success("Successfully created");
-          //window.location.href = "/dashboard";
-        }
-        setAddIsOpen(false);
-      }
-    } catch (error) {
-      console.log(error.message);
-      toast.error("Something went wrong");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleUpdateBtn = () => {
-    setIsLoading(true);
-    try {
-      toast.success("You are successfully edited");
-    } catch (error) {
-      console.log(error.message);
-      toast.error("Something went wrong");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleDeleteBtn = async () => {
-    setIsLoading(true);
-    try {
-      const response = await axios.delete("/api/shop", {
-        data: {
-          id: shop.id,
-        },
-      });
-      if (response.statusText === "FAILED") {
-        toast.error(response.data);
-      } else {
-        setShopData((data) => data.filter((post) => post.id !== shop.id));
-        toast("Hooray! The Shop has been removed successfully.");
-      }
-      setDeleteShop(false);
-    } catch (error) {
-      console.log(error.message);
-      toast.error("Something went wrong");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  return (
-    <div className="sm:mx-4 flex flex-col">
-      <div className="flex justify-between w-full">
-        <h1 className="text-3xl font-semibold">My Shops</h1>
-        <button
-          onClick={() => setAddIsOpen(true)}
-          type="button"
-          className="bg-black dark:bg-white rounded-md px-3 hover:shadow-lg animation-div hidden sm:block"
-        >
-          <span className="text-white dark:text-black font-medium text-sm">
-            New Shop
-          </span>
-        </button>
-      </div>
-      <div className="flex-center w-full mt-3">
-        <ShopCard
-          shopData={shopData}
-          setAddIsOpen={setAddIsOpen}
-          setEditIsOpen={setEditIsOpen}
-          setDeleteShop={setDeleteShop}
-          setShop={setShop}
-          isLoading={loading}
-        />
-      </div>
-      <ShopAddEditModal
-        isOpen={addIsOpen}
-        setIsOpen={setAddIsOpen}
-        title="Add Shop"
-        btnLabel="save"
-        handleBtn={handleCreateBtn}
-        isLoading={isLoading}
-        setData={setNewShop}
-      />
-
-      <ShopAddEditModal
-        isOpen={editIsOpen}
-        setIsOpen={setEditIsOpen}
-        title="Edit Shop"
-        btnLabel="save"
-        handleBtn={handleUpdateBtn}
-        isLoading={isLoading}
-        data={shop}
-        setData={setShop}
-      />
-      <ConfirmModal
-        isOpen={deleteShop}
-        setIsOpen={setDeleteShop}
-        title="Delete Shop"
-        btnLabel="Confirm"
-        handleConfirmBtn={handleDeleteBtn}
-        isLoading={isLoading}
-      />
-    </div>
-  );
-};
-
-export default DashBoard;
-
 const ShopCard = ({
   shopData,
   setAddIsOpen,
@@ -289,3 +119,227 @@ const PopOver = ({
     </Popover>
   );
 };
+
+const DashBoard = () => {
+  // Retrieve user session information
+  const { data: session } = useSession();
+  // Fetch user shop data
+  const {
+    data: fetchedData,
+    error,
+    isLoading: loading,
+  } = useUserShop({ userId: session?.user?.id });
+
+  // State to manage loading state for various actions
+  const [isLoading, setIsLoading] = useState(false);
+
+  // State for managing modals (Add, Edit, Delete)
+  const [addIsOpen, setAddIsOpen] = useState(false);
+  const [editIsOpen, setEditIsOpen] = useState(false);
+  const [deleteShop, setDeleteShop] = useState(false);
+
+  // State for storing user shop data and selected shop for editing
+  const [userShop, setUserShop] = useState(null);
+  const [shopData, setShopData] = useState([]);
+
+  // Effect to update shop data and handle errors
+  useEffect(() => {
+    if (fetchedData) {
+      setShopData(fetchedData);
+    }
+
+    if (error) {
+      console.error("Error :", error);
+      toast("Uh-oh! There was an issue fetching shop details");
+    }
+  }, [error, fetchedData]);
+
+  // Function to handle shop create ,update and delete
+  const handleCreateBtn = async (newShop) => {
+    setIsLoading(true);
+
+    const userInput = {
+      name: newShop.name,
+      about: newShop.about,
+      email: newShop.email,
+      phoneNumber: newShop.phonenumber,
+      location: newShop.location,
+    };
+
+    try {
+      // Validate the user input
+      const validation = ShopValidation.addShop.safeParse(userInput);
+
+      //if validation is failure, return error message
+      if (validation.success === false) {
+        const { issues } = validation.error;
+        issues.forEach((err) => {
+          toast.error(err.message);
+        });
+      } else {
+        // If validation is successful, make the API request
+        const response = await axios.post("/api/shop", {
+          userID: session.user.id,
+          name: newShop.name,
+          about: newShop.about,
+          email: newShop.email,
+          phoneNumber: newShop.phonenumber,
+          location: newShop.location,
+        });
+        if (response.statusText === "FAILED") {
+          toast.error(response.data);
+        } else {
+          setShopData((data) => [...data, response.data]);
+          toast("Hooray! You've successfully added a new shop ");
+          //window.location.href = "/dashboard";
+        }
+        setAddIsOpen(false);
+      }
+    } catch (error) {
+      console.log(error.message);
+      toast.error("Something went wrong");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleUpdateBtn = async (editShop) => {
+    setIsLoading(true);
+
+    const userInput = {
+      name: editShop.name,
+      about: editShop.about,
+      email: editShop.email,
+      phoneNumber: editShop.phonenumber,
+      location: editShop.location,
+    };
+
+    try {
+      // Validate the user input
+      const validation = ShopValidation.addShop.safeParse(userInput);
+      //if validation is failure, return error message
+      if (validation.success === false) {
+        const { issues } = validation.error;
+        issues.forEach((err) => {
+          toast.error(err.message);
+        });
+      } else {
+        // If validation is successful, make the API request
+        const response = await axios.patch("/api/shop", {
+          shopId: userShop.id,
+          name: editShop.name,
+          about: editShop.about,
+          email: editShop.email,
+          phoneNumber: editShop.phonenumber,
+          location: editShop.location,
+        });
+        if (response.statusText === "FAILED") {
+          toast.error(response.data);
+        } else {
+          let updatedShop = response.data;
+          let shopIndex = shopData.findIndex(
+            (shopPost) => shopPost.id === updatedShop.id
+          );
+          if (shopIndex !== -1) {
+            setShopData((data) => {
+              const updatedShopData = [...data];
+              updatedShopData[shopIndex] = updatedShop;
+              return updatedShopData;
+            });
+          }
+          toast("Success! Your changes have been saved.");
+          //window.location.href = "/dashboard";
+        }
+        setEditIsOpen(false);
+      }
+    } catch (error) {
+      console.log(error.message);
+      toast.error("Something went wrong");
+    } finally {
+      setUserShop(null);
+      setIsLoading(false);
+    }
+  };
+
+  const handleDeleteBtn = async () => {
+    setIsLoading(true);
+    try {
+      const response = await axios.delete("/api/shop", {
+        data: {
+          id: userShop.id,
+        },
+      });
+      if (response.statusText === "FAILED") {
+        toast.error(response.data);
+      } else {
+        setShopData((data) => data.filter((post) => post.id !== userShop.id));
+        toast("Hooray! The Shop has been removed successfully.");
+      }
+      setDeleteShop(false);
+    } catch (error) {
+      console.log(error.message);
+      toast.error("Something went wrong");
+    } finally {
+      setUserShop(null);
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <div className="sm:mx-4 flex flex-col">
+      {/* Header */}
+      <div className="flex justify-between w-full">
+        <h1 className="text-3xl font-semibold">My Shops</h1>
+        <button
+          onClick={() => setAddIsOpen(true)}
+          type="button"
+          className="bg-black dark:bg-white rounded-md px-3 hover:shadow-lg animation-div hidden sm:block"
+        >
+          <span className="text-white dark:text-black font-medium text-sm">
+            New Shop
+          </span>
+        </button>
+      </div>
+      <div className="flex-center w-full mt-3">
+        {/* ShopCard Component */}
+        <ShopCard
+          shopData={shopData}
+          setAddIsOpen={setAddIsOpen}
+          setEditIsOpen={setEditIsOpen}
+          setDeleteShop={setDeleteShop}
+          setShop={setUserShop}
+          isLoading={loading}
+        />
+      </div>
+      {/* Modals */}
+      <ShopAddEditModal
+        isOpen={addIsOpen}
+        setIsOpen={setAddIsOpen}
+        title="Add Shop"
+        btnLabel="save"
+        onSave={handleCreateBtn}
+        isLoading={isLoading}
+      />
+
+      <ShopAddEditModal
+        isOpen={editIsOpen}
+        setIsOpen={setEditIsOpen}
+        title="Edit Shop"
+        btnLabel="save"
+        onSave={handleUpdateBtn}
+        isLoading={isLoading}
+        data={userShop}
+      />
+      <ConfirmModal
+        isOpen={deleteShop}
+        setIsOpen={setDeleteShop}
+        title="Delete Shop"
+        btnLabel="Confirm"
+        handleConfirmBtn={handleDeleteBtn}
+        isLoading={isLoading}
+      />
+    </div>
+  );
+};
+
+export default DashBoard;
