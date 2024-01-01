@@ -8,14 +8,14 @@ import { WaitingLoader } from "../ui";
 
 const ConfirmModal = ({
   isOpen,
-  setIsOpen,
+  onClose,
+  onConfirm,
+  isLoading,
   title,
   btnLabel,
-  handleConfirmBtn,
-  isLoading,
 }) => {
   function closeModal() {
-    setIsOpen(false);
+    onClose(false);
   }
 
   const styleConfirmModel = {
@@ -84,7 +84,7 @@ const ConfirmModal = ({
                       </button>
 
                       <button
-                        onClick={handleConfirmBtn}
+                        onClick={onConfirm}
                         className={`text-white shadow focus:ring-white border-transparent bg-red-600 hover:bg-red-500 focus:bg-red-700 focus:ring-offset-red-700 ${styleConfirmModel.btn}`}
                       >
                         <span className={styleConfirmModel.btnLabel}>

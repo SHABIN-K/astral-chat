@@ -8,11 +8,11 @@ import { FormButtons, FormInput, WaitingLoader } from "../ui";
 
 const ShopAddEditModal = ({
   isOpen,
-  setIsOpen,
-  title,
-  btnLabel,
+  onClose,
   onSave,
   isLoading,
+  title,
+  btnLabel,
   data,
 }) => {
   const [formData, setFormData] = useState({
@@ -44,19 +44,19 @@ const ShopAddEditModal = ({
     }
   }, [data]);
 
-  const handleSave = () => {
-    onSave(formData);
-  };
-
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
-  function closeModal() {
-    setIsOpen(false);
+  function handleSave() {
+    onSave(formData);
   }
-  
+
+  function closeModal() {
+    onClose(false);
+  }
+
   return (
     <Transition appear show={isOpen} as={Fragment}>
       <Dialog as="div" className="relative z-10" onClose={closeModal}>

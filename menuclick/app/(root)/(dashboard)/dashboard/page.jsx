@@ -1,6 +1,10 @@
 "use client";
 
-import { useShopStore } from "@/utils/state/use-Post";
+import {
+  useShopStore,
+  useEditModalStore,
+  useDeleteModalStore,
+} from "@/utils/state";
 import { ShopValidation } from "@/utils/validations/shop";
 import SkeletonLoading from "@/components/skeleton/SkeletonCard";
 import { ConfirmModal, ShopAddEditModal } from "@/components/modal";
@@ -17,20 +21,12 @@ import { useUserShop } from "@/utils/hooks/useShop";
 import { useEffect, useState, Fragment } from "react";
 import { Transition, Popover } from "@headlessui/react";
 
-const ShopCard = ({
-  shopData,
-  setAddIsOpen,
-  setEditIsOpen,
-  setDeleteShop,
-  setShop,
-  isLoading,
-}) => {
+const ShopCard = ({ shopData, setAddIsOpen, setShop, isLoading }) => {
   const styleShopCard = {
     card: "rounded-xl border-2 border-color p-4 w-full h-full animation-div overflow-hidden",
     h2: "font-semibold text-base sm:text-lg text-color",
     h3: "text-xs text-gray-400",
     p: "sm:mt-1 block text-color text-sm",
-    menu: "hover:bg-gray-200 dark:hover:bg-gray-500 p-1 text-sm md:text-xs rounded-lg",
   };
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 w-full">
@@ -42,13 +38,7 @@ const ShopCard = ({
             key={index}
             className={`flex flex-col justify-between  ${styleShopCard.card}`}
           >
-            <PopOver
-              post={data}
-              setEditIsOpen={setEditIsOpen}
-              setDeleteShop={setDeleteShop}
-              styleShopCard={styleShopCard}
-              setShop={setShop}
-            />
+            <PopOver post={data} setShop={setShop} />
             <Link href={`dashboard/${data.id}`}>
               <h2 className={styleShopCard.h2}>{data.name}</h2>
               <p className={`sm:text-base ${styleShopCard.p}`}>{data.about}</p>
@@ -74,21 +64,22 @@ const ShopCard = ({
   );
 };
 
-const PopOver = ({
-  post,
-  setEditIsOpen,
-  setDeleteShop,
-  styleShopCard,
-  setShop,
-}) => {
+const PopOver = ({ post, setShop }) => {
+  const { onOpen: editOpen } = useEditModalStore();
+  const { onOpen: deleteOpen } = useDeleteModalStore();
+
   const handleEditBtn = (post) => {
     setShop(post);
-    setEditIsOpen(true);
+    editOpen();
   };
 
   const handleDeleteBtn = (post) => {
     setShop(post);
-    setDeleteShop(true);
+    deleteOpen(true);
+  };
+
+  const stylePopover = {
+    menu: "hover:bg-gray-200 dark:hover:bg-gray-500 p-1 text-sm md:text-xs rounded-lg",
   };
 
   return (
@@ -106,11 +97,11 @@ const PopOver = ({
         leaveTo="transform opacity-0 scale-95"
       >
         <Popover.Panel className="flex flex-col absolute right-0 z-10 mt-4 w-32 origin-top-right rounded-lg bg-white dark:bg-gray-800 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none p-1">
-          <p className={styleShopCard.menu} onClick={() => handleEditBtn(post)}>
+          <p className={stylePopover.menu} onClick={() => handleEditBtn(post)}>
             Edit
           </p>
           <p
-            className={styleShopCard.menu}
+            className={stylePopover.menu}
             onClick={() => handleDeleteBtn(post)}
           >
             Delete
@@ -122,8 +113,11 @@ const PopOver = ({
 };
 
 const DashBoard = () => {
-  //for global state mangement
+  //global state mangement
   const { setShops } = useShopStore();
+  const { isOpen: editOpen, onClose: editClose } = useEditModalStore();
+  const { isOpen: deleteOpen, onClose: deleteClose } = useDeleteModalStore();
+
   // Retrieve user session information
   const { data: session } = useSession();
   // Fetch user shop data
@@ -133,13 +127,8 @@ const DashBoard = () => {
     isLoading: loading,
   } = useUserShop({ userId: session?.user?.id });
 
-  // State to manage loading state for various actions
   const [isLoading, setIsLoading] = useState(false);
-
-  // State for managing modals (Add, Edit, Delete)
   const [addIsOpen, setAddIsOpen] = useState(false);
-  const [editIsOpen, setEditIsOpen] = useState(false);
-  const [deleteShop, setDeleteShop] = useState(false);
 
   // State for storing user shop data and selected shop for editing
   const [userShop, setUserShop] = useState(null);
@@ -258,7 +247,7 @@ const DashBoard = () => {
           toast("Success! Your changes have been saved.");
           //window.location.href = "/dashboard";
         }
-        setEditIsOpen(false);
+        editClose(false);
       }
     } catch (error) {
       console.log(error.message);
@@ -283,7 +272,7 @@ const DashBoard = () => {
         setShopData((data) => data.filter((post) => post.id !== userShop.id));
         toast("Hooray! The Shop has been removed successfully.");
       }
-      setDeleteShop(false);
+      deleteClose(false);
     } catch (error) {
       console.log(error.message);
       toast.error("Something went wrong");
@@ -313,8 +302,6 @@ const DashBoard = () => {
         <ShopCard
           shopData={shopData}
           setAddIsOpen={setAddIsOpen}
-          setEditIsOpen={setEditIsOpen}
-          setDeleteShop={setDeleteShop}
           setShop={setUserShop}
           isLoading={loading}
         />
@@ -322,29 +309,29 @@ const DashBoard = () => {
       {/* Modals */}
       <ShopAddEditModal
         isOpen={addIsOpen}
-        setIsOpen={setAddIsOpen}
-        title="Add Shop"
-        btnLabel="save"
+        onClose={setAddIsOpen}
         onSave={handleCreateBtn}
         isLoading={isLoading}
+        title="Add Shop"
+        btnLabel="save"
       />
 
       <ShopAddEditModal
-        isOpen={editIsOpen}
-        setIsOpen={setEditIsOpen}
-        title="Edit Shop"
-        btnLabel="save"
+        isOpen={editOpen}
+        onClose={editClose}
         onSave={handleUpdateBtn}
         isLoading={isLoading}
+        title="Edit Shop"
+        btnLabel="save"
         data={userShop}
       />
       <ConfirmModal
-        isOpen={deleteShop}
-        setIsOpen={setDeleteShop}
+        isOpen={deleteOpen}
+        onClose={deleteClose}
+        onConfirm={handleDeleteBtn}
+        isLoading={isLoading}
         title="Delete Shop"
         btnLabel="Confirm"
-        handleConfirmBtn={handleDeleteBtn}
-        isLoading={isLoading}
       />
     </div>
   );

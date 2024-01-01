@@ -1,14 +1,18 @@
 "use client";
 import { Loader } from "@/components/ui";
 import { useShopStore } from "@/utils/state/use-Post";
+import { useEditModalStore } from "@/utils/state/use-modal";
 
 import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { EllipsisHorizontalIcon } from "@heroicons/react/24/outline";
 
 const UserShop = ({ params }) => {
   const router = useRouter();
   const { shops } = useShopStore();
+  const { isOpen, onOpen, onClose } = useEditModalStore();
 
+  console.log(isOpen);
   const [isEffect, setIsEffect] = React.useState(false);
   const [currentShop, setCurrentShop] = React.useState(null);
 
@@ -16,7 +20,7 @@ const UserShop = ({ params }) => {
     // Check if the provided shop ID is not in the array of shop IDs
     if (!shops.map((shop) => shop.id).includes(params.shopId)) {
       // If the ID is not in the array, log an error message and redirect to the dashboard
-      console.log("Wrong shop Please check again");
+      console.error("Wrong shop Please check again");
       router.push("/dashboard");
     } else {
       // If the ID is in the array, set the state variable to true
@@ -26,21 +30,27 @@ const UserShop = ({ params }) => {
     }
   }, [params.shopId, router, shops]);
 
+  const handleBtn = () => {
+    console.log("hello shabin");
+  };
   return (
     <>
       {isEffect ? (
         <div className="sm:mx-4 flex flex-col">
           {/* Header */}
           <div className="flex justify-between w-full">
-            <h1 className="text-xl font-semibold">{currentShop.name}</h1>
-            <button
-              type="button"
-              className="bg-black dark:bg-white rounded-md px-3 hover:shadow-lg animation-div hidden sm:block"
-            >
-              <span className="text-white dark:text-black font-medium text-sm">
-                New Shop
-              </span>
-            </button>
+            <h1 className="text-lg font-medium">{currentShop.name}</h1>
+            <div className="flex">
+              <button
+                onClick={handleBtn}
+                type="button"
+                className="bg-black dark:bg-white rounded-md px-3 hover:shadow-lg animation-div"
+              >
+                <span className="text-white dark:text-black">
+                  <EllipsisHorizontalIcon className="h-6 w-6" />
+                </span>
+              </button>
+            </div>
           </div>
         </div>
       ) : (
