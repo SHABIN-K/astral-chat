@@ -7,8 +7,8 @@ import {
 } from "@/utils/state";
 import { PopOver } from "@/components/ui";
 import { useUserShop } from "@/utils/hooks/useShop";
+import { SkeletonLoading } from "@/components/skeleton";
 import { ShopValidation } from "@/utils/validations/shop";
-import SkeletonLoading from "@/components/skeleton/SkeletonCard";
 import { ConfirmModal, ShopAddEditModal } from "@/components/modal";
 
 import axios from "axios";
