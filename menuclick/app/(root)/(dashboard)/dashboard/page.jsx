@@ -129,7 +129,7 @@ const DashBoard = () => {
   }, [setShops, shopData]);
 
   // Function to handle shop create ,update and delete
-  const onCreate = async (newShop) => {
+  const onCreate = async (newShop, setFormData) => {
     setIsLoading(true);
 
     const userInput = {
@@ -175,6 +175,14 @@ const DashBoard = () => {
       console.log(error.message);
       toast.error("Something went wrong");
     } finally {
+      setFormData({
+        name: "",
+        userName: "",
+        about: "",
+        email: "",
+        phonenumber: "",
+        location: "",
+      });
       setIsLoading(false);
     }
   };

@@ -52,7 +52,7 @@ const ShopAddEditModal = ({
   };
 
   function handleSave() {
-    onSave(formData);
+    onSave(formData, setFormData);
   }
 
   function closeModal() {
