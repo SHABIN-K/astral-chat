@@ -28,7 +28,7 @@ const ShopAddEditModal = ({
     if (data) {
       setFormData({
         name: data?.name || "",
-        name: data?.userName || "",
+        userName: data?.userName || "",
         about: data?.about || "",
         email: data?.email || "",
         phonenumber: data?.phoneNumber || "",
@@ -115,11 +115,15 @@ const ShopAddEditModal = ({
                         label="User name"
                         type="text"
                         name="userName"
-                        value={formData.userName}
+                        value={
+                          formData.userName
+                            ? formData.userName.toLowerCase().trim()
+                            : ""
+                        }
                         placeholder="Enter your shop user name"
                         onChange={handleInputChange}
                         classLabel="label_form"
-                        classInput="input_form lowercase"
+                        classInput="input_form"
                       />
                       <>
                         <label className="label_form">About</label>

@@ -5,12 +5,25 @@ export async function POST(req) {
     await req.json();
 
   try {
+    // Check if a username already exists by username
+    const existingUsername = await prisma.shop.findFirst({
+      where: { userName: userName },
+    });
+
+    // username with this username already exists
+    if (existingUsername) {
+      return new Response("Oops! Username is Not Available", {
+        status: 200,
+        statusText: "FAILED",
+      });
+    }
+
     // Create the new Shop
     const newShop = await prisma.shop.create({
       data: {
         userId: userID,
         name: name.trim(),
-        userName: userName.toLowerCase().trim(),
+        userName,
         about: about.trim(),
         email,
         phoneNumber,
@@ -64,7 +77,7 @@ export async function PATCH(req) {
     // Check if any data has changed
     const hasDataChanged =
       findShop.name !== name ||
-      findShop.userName !== userName.toLowerCase() ||
+      findShop.userName !== userName ||
       findShop.about !== about ||
       findShop.email !== email ||
       findShop.phoneNumber !== phoneNumber ||
@@ -77,12 +90,30 @@ export async function PATCH(req) {
       });
     }
 
+    // Check if a username already exists by username
+    const existingUsername = await prisma.shop.findFirst({
+      where: { userName: userName },
+    });
+
+    console.log(existingUsername);
+
+    // If the existing username is found and it's different from the current username
+    if (
+      existingUsername &&
+      existingUsername.userName &&
+      findShop.userName !== userName
+    ) {
+      return new Response("Oops! Username is Not Available", {
+        status: 200,
+        statusText: "FAILED",
+      });
+    }
     // update the Shop
     const updateUser = await prisma.shop.update({
       where: { id: findShop.id },
       data: {
         name: name.trim(),
-        userName: userName.toLowerCase().trim(),
+        userName,
         about: about.trim(),
         email,
         phoneNumber,
