@@ -73,8 +73,8 @@ const ShopCard = ({ shopData, setAddIsOpen, setShop, isLoading }) => {
         <div
           className={`flex-center flex-col  ${styleShopCard.card}`}
           onClick={() =>
-            toast.message("project limit reached", {
-              description: "You have reached your project limit",
+            toast.message("Shop limit reached", {
+              description: "You have reached your shop limit",
             })
           }
         >
@@ -269,7 +269,15 @@ const DashBoard = () => {
       <div className="flex justify-between w-full">
         <h1 className="text-3xl font-semibold">My Shops</h1>
         <button
-          onClick={() => setAddIsOpen(true)}
+          onClick={() => {
+            if (shopData?.length < process.env.NEXT_PUBLIC_MAX_SHOP_PER_USER) {
+              setAddIsOpen(true);
+            } else {
+              toast.message("Shop limit reached", {
+                description: "You have reached your shop limit",
+              });
+            }
+          }}
           type="button"
           className="bg-black dark:bg-white rounded-md px-3 hover:shadow-lg animation-div hidden sm:block"
         >
