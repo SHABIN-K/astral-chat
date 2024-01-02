@@ -73,6 +73,7 @@ const UserShop = ({ params }) => {
 
     const userInput = {
       name: editShop.name,
+      userName: editShop.userName,
       about: editShop.about,
       email: editShop.email,
       phoneNumber: editShop.phonenumber,
@@ -92,6 +93,7 @@ const UserShop = ({ params }) => {
         const response = await axios.patch("/api/shop", {
           shopId: currentShop.id,
           name: editShop.name,
+          userName: editShop.userName,
           about: editShop.about,
           email: editShop.email,
           phoneNumber: editShop.phonenumber,

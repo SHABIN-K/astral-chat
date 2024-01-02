@@ -10,6 +10,21 @@ const Shop = z.object({
     .max(30, {
       message: "Name can only be up to 30 characters long..",
     }),
+  userName: z
+    .string({
+      required_error: "User name is required.",
+      invalid_type_error: "User name must be a string.",
+    })
+    .min(1, { message: "User name is required." })
+    .max(30, {
+      message: "User name can only be up to 30 characters long.",
+    })
+    .refine((value) => !/\s/.test(value), {
+      message: "User name cannot contain whitespace.",
+    })
+    .refine((value) => /^[a-zA-Z0-9_]+$/.test(value), {
+      message: "User name can only contain letters, numbers, and underscores.",
+    }),
   about: z
     .string({
       required_error: "about is required.",
@@ -44,6 +59,7 @@ const Shop = z.object({
 export const ShopValidation = {
   addShop: Shop.required({
     name: true,
+    userName: true,
     about: true,
     email: true,
     phoneNumber: true,

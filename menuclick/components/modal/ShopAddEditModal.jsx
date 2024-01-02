@@ -17,6 +17,7 @@ const ShopAddEditModal = ({
 }) => {
   const [formData, setFormData] = useState({
     name: "",
+    userName: "",
     about: "",
     email: "",
     phonenumber: "",
@@ -27,6 +28,7 @@ const ShopAddEditModal = ({
     if (data) {
       setFormData({
         name: data?.name || "",
+        name: data?.userName || "",
         about: data?.about || "",
         email: data?.email || "",
         phonenumber: data?.phoneNumber || "",
@@ -35,6 +37,7 @@ const ShopAddEditModal = ({
     } else {
       setFormData({
         name: "",
+        userName: "",
         about: "",
         email: "",
         phonenumber: "",
@@ -107,6 +110,16 @@ const ShopAddEditModal = ({
                         onChange={handleInputChange}
                         classLabel="label_form"
                         classInput="input_form"
+                      />
+                      <FormInput
+                        label="User name"
+                        type="text"
+                        name="userName"
+                        value={formData.userName}
+                        placeholder="Enter your shop user name"
+                        onChange={handleInputChange}
+                        classLabel="label_form"
+                        classInput="input_form lowercase"
                       />
                       <>
                         <label className="label_form">About</label>

@@ -114,6 +114,7 @@ const DashBoard = () => {
 
     const userInput = {
       name: newShop.name,
+      userName: newShop.userName,
       about: newShop.about,
       email: newShop.email,
       phoneNumber: newShop.phonenumber,
@@ -135,6 +136,7 @@ const DashBoard = () => {
         const response = await axios.post("/api/shop", {
           userID: session.user.id,
           name: newShop.name,
+          userName: newShop.userName,
           about: newShop.about,
           email: newShop.email,
           phoneNumber: newShop.phonenumber,
@@ -162,6 +164,7 @@ const DashBoard = () => {
 
     const userInput = {
       name: editShop.name,
+      userName: editShop.userName,
       about: editShop.about,
       email: editShop.email,
       phoneNumber: editShop.phonenumber,
@@ -182,6 +185,7 @@ const DashBoard = () => {
         const response = await axios.patch("/api/shop", {
           shopId: userShop.id,
           name: editShop.name,
+          userName: editShop.userName,
           about: editShop.about,
           email: editShop.email,
           phoneNumber: editShop.phonenumber,

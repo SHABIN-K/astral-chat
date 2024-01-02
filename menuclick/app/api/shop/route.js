@@ -1,7 +1,7 @@
 import prisma from "@/utils/prisma";
 
 export async function POST(req) {
-  const { userID, name, about, email, phoneNumber, location } =
+  const { userID, name, userName, about, email, phoneNumber, location } =
     await req.json();
 
   try {
@@ -10,6 +10,7 @@ export async function POST(req) {
       data: {
         userId: userID,
         name: name.trim(),
+        userName: userName.toLowerCase().trim(),
         about: about.trim(),
         email,
         phoneNumber,
@@ -53,7 +54,7 @@ export async function DELETE(req) {
 }
 
 export async function PATCH(req) {
-  const { shopId, name, about, email, phoneNumber, location } =
+  const { shopId, name, userName, about, email, phoneNumber, location } =
     await req.json();
   try {
     const findShop = await prisma.shop.findFirst({
@@ -63,6 +64,7 @@ export async function PATCH(req) {
     // Check if any data has changed
     const hasDataChanged =
       findShop.name !== name ||
+      findShop.userName !== userName.toLowerCase() ||
       findShop.about !== about ||
       findShop.email !== email ||
       findShop.phoneNumber !== phoneNumber ||
@@ -79,11 +81,12 @@ export async function PATCH(req) {
     const updateUser = await prisma.shop.update({
       where: { id: findShop.id },
       data: {
-        name,
-        about,
+        name: name.trim(),
+        userName: userName.toLowerCase().trim(),
+        about: about.trim(),
         email,
         phoneNumber,
-        location,
+        location: location.trim(),
       },
     });
 
