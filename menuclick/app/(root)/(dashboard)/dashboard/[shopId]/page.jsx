@@ -13,6 +13,37 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { EllipsisHorizontalIcon } from "@heroicons/react/24/outline";
 
+const DashCard = ({ shopId, router }) => {
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 w-full">
+      {DashItems.map((item, index) => (
+        <div
+          key={index}
+          className={`rounded-xl border-2 border-color p-4 w-full h-full overflow-hidden flex flex-col justify-center items-center min-h-40 ${
+            item.active === false
+              ? "cursor-not-allowed hover:opacity-50"
+              : "animation-div cursor-pointer"
+          }`}
+          onClick={() => {
+            if (item.active) {
+              router.push(`/dashboard/${shopId}${item.link}`);
+            }
+          }}
+          aria-disabled={!item.active}
+        >
+          {item.icon}
+          <h2 className="font-semibold text-base sm:text-lg text-color">
+            {item.name}
+          </h2>
+          <p className="sm:mt-1 block text-color text-sm text-center">
+            {item.desc}
+          </p>
+        </div>
+      ))}
+    </div>
+  );
+};
+
 const UserShop = ({ params }) => {
   const router = useRouter();
   const { shops } = useShopStore();
@@ -150,34 +181,3 @@ const UserShop = ({ params }) => {
 };
 
 export default UserShop;
-
-const DashCard = ({ shopId, router }) => {
-  return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 w-full">
-      {DashItems.map((item, index) => (
-        <div
-          key={index}
-          className={`rounded-xl border-2 border-color p-4 w-full h-full overflow-hidden flex flex-col justify-center items-center min-h-40 ${
-            item.active === false
-              ? "cursor-not-allowed hover:opacity-50"
-              : "animation-div cursor-pointer"
-          }`}
-          onClick={() => {
-            if (item.active) {
-              router.push(`/dashboard/${shopId}${item.link}`);
-            }
-          }}
-          aria-disabled={!item.active}
-        >
-          {item.icon}
-          <h2 className="font-semibold text-base sm:text-lg text-color">
-            {item.name}
-          </h2>
-          <p className="sm:mt-1 block text-color text-sm text-center">
-            {item.desc}
-          </p>
-        </div>
-      ))}
-    </div>
-  );
-};
