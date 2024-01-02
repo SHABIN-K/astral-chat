@@ -27,15 +27,15 @@ export const DashItems = [
     icon: <IoLayersSharp className="w-8 h-8" />,
     desc: "Foster a dialogue with your customers: Listen, learn, and grow together",
     link: "/feedback",
-    active: false,
+    active: true,
   },
   {
     id: 3,
-    name: "Advertisement",
+    name: "Promotions",
     icon: <MdAdsClick className="w-8 h-8" />,
     desc: "Boost sales by showcasing featured dishes and limited-time offers",
     link: "/banners",
-    active: false,
+    active: true,
   },
   {
     id: 4,
