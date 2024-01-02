@@ -11,11 +11,12 @@ datasource db {
 }
 
 model User {
-  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  id            String       @id @default(auto()) @map("_id") @db.ObjectId
   name          String?
-  email         String?   @unique
+  email         String?      @unique
   emailVerified DateTime?
   image         String?
+  isSubscribed  Subscription @default(false)
   shop          Shop[]
   accounts      Account[]
   sessions      Session[]
@@ -67,4 +68,9 @@ model Shop {
   email       String
   phoneNumber String
   location    String
+}
+
+enum Subscription {
+  true
+  false
 }

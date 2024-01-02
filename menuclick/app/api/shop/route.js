@@ -95,8 +95,6 @@ export async function PATCH(req) {
       where: { userName: userName },
     });
 
-    console.log(existingUsername);
-
     // If the existing username is found and it's different from the current username
     if (
       existingUsername &&

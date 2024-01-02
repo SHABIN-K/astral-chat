@@ -21,7 +21,7 @@ const SkeletonCard = () => {
   );
 };
 
-const skeleton = [...Array(5).keys()].map((i) => {
+const skeleton = [...Array(6).keys()].map((i) => {
   return <SkeletonCard key={i} />;
 });
 

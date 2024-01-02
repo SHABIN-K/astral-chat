@@ -28,44 +28,64 @@ const ShopCard = ({ shopData, setAddIsOpen, setShop, isLoading }) => {
     h3: "text-xs text-gray-400",
     p: "sm:mt-1 block text-color text-sm",
   };
-  return (
+
+  const LoadingWrapper = ({ children }) => (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 w-full">
-      {isLoading ? (
-        <SkeletonLoading />
-      ) : (
-        shopData.map((data, index) => (
-          <div
-            key={index}
-            className={`flex flex-col justify-items-stretch ${styleShopCard.card}`}
-          >
-            <PopOver
-              post={data}
-              setShop={setShop}
-              button={<EllipsisVerticalIcon className="icon" />}
-              buttonStyle="absolute right-0 flex rounded-full outline-none"
-            />
-            <Link href={`dashboard/${data.id}`}>
-              <h2 className={styleShopCard.h2}>{data.name}</h2>
-              <p className={`sm:text-base ${styleShopCard.p}`}>{data.about}</p>
-              <div className="flex justify-between">
-                <h3 className={styleShopCard.h3}>{data.email}</h3>
-                <h3 className={styleShopCard.h3}>{data.location}</h3>
-              </div>
-            </Link>
-          </div>
-        ))
-      )}
-      <div
-        className={`flex-center flex-col  ${styleShopCard.card}`}
-        onClick={() => setAddIsOpen(true)}
-      >
-        <SquaresPlusIcon className="h-8 text-color" />
-        <h2 className={styleShopCard.h2}>Add new shop</h2>
-        <p className={`text-center ${styleShopCard.p}`}>
-          Add a new restaurant to your digital menu
-        </p>
-      </div>
+      {isLoading ? <SkeletonLoading /> : children}
     </div>
+  );
+
+  return (
+    <LoadingWrapper>
+      {shopData.map((data, index) => (
+        <div
+          key={index}
+          className={`flex flex-col justify-items-stretch ${styleShopCard.card}`}
+        >
+          <PopOver
+            post={data}
+            setShop={setShop}
+            button={<EllipsisVerticalIcon className="icon" />}
+            buttonStyle="absolute right-0 flex rounded-full outline-none"
+          />
+          <Link href={`dashboard/${data.id}`}>
+            <h2 className={styleShopCard.h2}>{data.name}</h2>
+            <p className={`sm:text-base ${styleShopCard.p}`}>{data.about}</p>
+            <div className="flex justify-between">
+              <h3 className={styleShopCard.h3}>{data.email}</h3>
+              <h3 className={styleShopCard.h3}>{data.location}</h3>
+            </div>
+          </Link>
+        </div>
+      ))}
+      {shopData?.length < process.env.NEXT_PUBLIC_MAX_SHOP_PER_USER ? (
+        <div
+          className={`flex-center flex-col  ${styleShopCard.card}`}
+          onClick={() => setAddIsOpen(true)}
+        >
+          <SquaresPlusIcon className="h-8 text-color" />
+          <h2 className={styleShopCard.h2}>Add new shop</h2>
+          <p className={`text-center ${styleShopCard.p}`}>
+            Add a new restaurant to your digital menu
+          </p>
+        </div>
+      ) : (
+        <div
+          className={`flex-center flex-col  ${styleShopCard.card}`}
+          onClick={() =>
+            toast.message("project limit reached", {
+              description: "You have reached your project limit",
+            })
+          }
+        >
+          <SquaresPlusIcon className="h-8 text-color" />
+          <h2 className={styleShopCard.h2}>Add new shop</h2>
+          <p className={`text-center ${styleShopCard.p}`}>
+            Add a new restaurant to your digital menu
+          </p>
+        </div>
+      )}
+    </LoadingWrapper>
   );
 };
 
