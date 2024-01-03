@@ -1,15 +1,15 @@
 "use client";
 
 import { DashItems } from "@/utils/constants";
+import { ShopLayout } from "@/modules/layouts";
 import { Loader, PopOver } from "@/components/ui";
-import { useShopStore } from "@/utils/state/use-Post";
 import { ShopValidation } from "@/utils/validations/shop";
 import { ConfirmModal, ShopAddEditModal } from "@/components/modal";
 import { useDeleteModalStore, useEditModalStore } from "@/utils/state";
 
 import axios from "axios";
 import { toast } from "sonner";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { EllipsisHorizontalIcon } from "@heroicons/react/24/outline";
 
@@ -45,28 +45,12 @@ const DashCard = ({ shopId, router }) => {
 };
 
 const UserShop = ({ params }) => {
+  const { isEffect, currentShop, setCurrentShop } = ShopLayout(params.shopId);
   const router = useRouter();
-  const { shops } = useShopStore();
   const { isOpen: editOpen, onClose: editClose } = useEditModalStore();
   const { isOpen: deleteOpen, onClose: deleteClose } = useDeleteModalStore();
 
-  useEffect(() => {
-    // Check if the provided shop ID is not in the array of shop IDs
-    if (!shops.map((shop) => shop.id).includes(params.shopId)) {
-      // If the ID is not in the array, log an error message and redirect to the dashboard
-      console.error("oops!.Wrong shop url, Please try again");
-      router.push("/dashboard");
-    } else {
-      // If the ID is in the array, set the state variable to true
-      const foundShop = shops.find((shop) => shop.id === params.shopId);
-      setCurrentShop(foundShop);
-      setIsEffect(true);
-    }
-  }, [params.shopId, router, shops]);
-
   const [isLoading, setIsLoading] = useState(false);
-  const [isEffect, setIsEffect] = useState(false);
-  const [currentShop, setCurrentShop] = useState(null);
 
   const onUpdate = async (editShop) => {
     setIsLoading(true);
