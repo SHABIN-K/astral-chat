@@ -27,7 +27,7 @@ export const DashItems = [
     icon: <IoLayersSharp className="w-8 h-8" />,
     desc: "Foster a dialogue with your customers: Listen, learn, and grow together",
     link: "/feedback",
-    active: true,
+    active: false,
   },
   {
     id: 3,

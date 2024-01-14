@@ -103,7 +103,7 @@ const Header = () => {
                 leaveTo="transform opacity-0 scale-95"
               >
                 <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white dark:bg-gray-800 py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none pb-2 px-1">
-                  <div className="flex-center flex-row p-2 space-x-1 border-color border-b w-full mb-1">
+                  <div className="flex justify-start items-center flex-row p-2 space-x-1 border-color border-b w-full mb-1">
                     <Image
                       className="h-8 w-8 rounded-full"
                       width={32}
