@@ -8,14 +8,13 @@ export const messageController = new Elysia({ prefix: "/messages" })
     .post(
         "/",
         async ({ body }) => {
-            // 1. Save to DB
             const message = await saveMessage({
                 conversationId: body.conversationId,
                 sender: body.sender,
                 content: body.content,
             });
 
-            // 2. Broadcast via WS
+            // Broadcast via WS
             broadcast(body.conversationId, {
                 type: "NEW_MESSAGE",
                 data: message,

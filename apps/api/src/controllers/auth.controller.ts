@@ -7,10 +7,7 @@ export const authController = new Elysia({ prefix: "/auth" })
     .post(
         "/session",
         async ({ body }) => {
-            // 1. Find/Create User
             const user = await findOrCreateUser(body.email);
-
-            // 2. Create Conversation
             const conversation = await getOrCreateConversation(user.id);
 
             return {

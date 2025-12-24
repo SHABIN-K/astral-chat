@@ -1,39 +1,31 @@
 import { useState, useEffect } from 'react'
 import { api, useChat } from '@astral-chat/sdk'
+import { useQuery } from '@tanstack/react-query'
 import { Sidebar } from '../features/dashboard/Sidebar'
 import { ConversationList } from '../features/chat/ConversationList'
 import { ChatArea } from '../features/chat/ChatArea'
-import type { ConversationWithMetadata } from '../types'
 
 export function DashboardPage() {
-    const [conversations, setConversations] = useState<ConversationWithMetadata[]>([])
     const [selectedId, setSelectedId] = useState<string | null>(null)
-    const [isLoadingList, setIsLoadingList] = useState(false)
 
-    // Setup chat hook
+    const { data: conversations = [], isLoading: isLoadingList } = useQuery({
+        queryKey: ['conversations'],
+        queryFn: async () => {
+            const { data } = await api.conversations.list()
+            return data
+        }
+    })
+
     const { messages, sendMessage, isLoading: isLoadingMessages, isConnected } = useChat({
         conversationId: selectedId || undefined,
         sender: 'admin'
     })
 
-    // Fetch conversations
     useEffect(() => {
-        const fetchConversations = async () => {
-            setIsLoadingList(true)
-            try {
-                const { data } = await api.conversations.list()
-                setConversations(data)
-                if (data.length > 0 && !selectedId) {
-                    setSelectedId(data[0].id)
-                }
-            } catch (err) {
-                console.error('Failed to fetch conversations', err)
-            } finally {
-                setIsLoadingList(false)
-            }
+        if (conversations.length > 0 && !selectedId) {
+            setSelectedId(conversations[0].id)
         }
-        fetchConversations()
-    }, [])
+    }, [conversations, selectedId])
 
     const selectedConversation = conversations.find(c => c.id === selectedId)
 

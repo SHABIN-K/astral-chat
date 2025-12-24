@@ -1,5 +1,6 @@
-import { useState, useCallback } from "react";
+import { useState } from "react";
 import { api, useChat } from "@astral-chat/sdk";
+import { useMutation } from "@tanstack/react-query";
 
 import Balatro from "./components/Balatro/Balatro";
 import { ToggleButton } from "./components/ToggleButton";
@@ -9,8 +10,6 @@ import { SessionStartForm } from "./features/widget/SessionStartForm";
 
 export default function App() {
     const [isOpen, setIsOpen] = useState(false);
-    const [isStarting, setIsStarting] = useState(false);
-
     const [session, setSession] = useState<{ userId: string; conversationId: string } | null>(null);
 
     // Chat hook handles messages, connection status, and sending
@@ -19,18 +18,14 @@ export default function App() {
         sender: "client",
     });
 
-    const handleStartSession = useCallback(async (email: string) => {
-        setIsStarting(true);
-        try {
-            const data = await api.auth.startSession(email);
-            setSession(data);
-        } catch (err) {
+    const { mutate: handleStartSession, isPending: isStarting } = useMutation({
+        mutationFn: (email: string) => api.auth.startSession(email),
+        onSuccess: (data) => setSession(data),
+        onError: (err) => {
             console.error("Failed to start session", err);
             alert("Could not start chat. Please check your connection.");
-        } finally {
-            setIsStarting(false);
         }
-    }, []);
+    });
 
     return (
         <>

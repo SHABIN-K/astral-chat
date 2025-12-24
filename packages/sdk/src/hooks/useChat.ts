@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useCallback, useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { api } from "../api/client";
 import { useWebSocket } from "./useWebSocket";
 import type { Message } from "../types";
@@ -47,8 +47,9 @@ export function useChat({ conversationId, userId, sender }: UseChatOptions) {
     }, [lastMessage, queryClient, queryKey]);
 
     // Send message with optimistic UI
-    const { mutateAsync: sendMessageMutation, error: mutationError } = useMutation({
+    const { mutate: sendMessage, error: mutationError } = useMutation({
         mutationFn: async (content: string) => {
+            if (!conversationId || !content.trim()) throw new Error("Invalid message");
             return api.messages.send({
                 conversationId,
                 sender,
@@ -56,13 +57,15 @@ export function useChat({ conversationId, userId, sender }: UseChatOptions) {
             });
         },
         onMutate: async (content) => {
+            if (!conversationId || !content.trim()) return;
+
             await queryClient.cancelQueries({ queryKey });
 
             const previousMessages = queryClient.getQueryData<Message[]>(queryKey);
 
             const optimisticMessage: Message = {
                 id: crypto.randomUUID(),
-                conversationId: conversationId!,
+                conversationId,
                 content,
                 sender,
                 createdAt: new Date(),
@@ -81,23 +84,12 @@ export function useChat({ conversationId, userId, sender }: UseChatOptions) {
             }
         },
         onSuccess: (savedMsg, _content, context) => {
+            if (!context) return;
             queryClient.setQueryData<Message[]>(queryKey, (old) =>
                 (old || []).map((m) => (m.id === context.optimisticMessageId ? savedMsg : m))
             );
         },
     });
-
-    const sendMessage = useCallback(
-        async (content: string) => {
-            if (!conversationId || !content.trim()) return;
-            try {
-                await sendMessageMutation(content);
-            } catch (error) {
-                console.error("Failed to send message", error);
-            }
-        },
-        [conversationId, sendMessageMutation]
-    );
 
     const error = (queryError as any)?.message || (mutationError as any)?.message || null;
 
