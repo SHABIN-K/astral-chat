@@ -1,0 +1,22 @@
+import { Elysia } from "elysia";
+import { findOrCreateUser } from "../services/auth.service";
+import { createConversation } from "../services/conversation.service";
+import { startSessionBody } from "../schemas/auth.schema";
+
+export const authController = new Elysia({ prefix: "/auth" })
+    .post(
+        "/session",
+        async ({ body }) => {
+            // 1. Find/Create User
+            const user = await findOrCreateUser(body.email);
+
+            // 2. Create Conversation
+            const conversation = await createConversation(user.id);
+
+            return {
+                userId: user.id,
+                conversationId: conversation.id,
+            };
+        },
+        { body: startSessionBody }
+    );

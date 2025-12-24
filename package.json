@@ -1,0 +1,16 @@
+{
+  "name": "astral-chat",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:api": "bun --cwd apps/api dev",
+    "dev:client": "bun --cwd apps/client dev",
+    "dev:web": "bun --cwd apps/web dev",
+    "dev": "bun run dev:api & bun run dev:client & bun run dev:web",
+    "db:push": "bun --cwd packages/db db:push",
+    "db:studio": "bun --cwd packages/db db:studio"
+  }
+}
