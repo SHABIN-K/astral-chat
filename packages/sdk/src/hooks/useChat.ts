@@ -6,11 +6,10 @@ import type { Message } from "../types";
 
 interface UseChatOptions {
     conversationId?: string;
-    userId?: string;
     sender: "client" | "admin";
 }
 
-export function useChat({ conversationId, userId, sender }: UseChatOptions) {
+export function useChat({ conversationId, sender }: UseChatOptions) {
     const queryClient = useQueryClient();
     const { isConnected, lastMessage } = useWebSocket(conversationId);
 
@@ -58,7 +57,7 @@ export function useChat({ conversationId, userId, sender }: UseChatOptions) {
         },
         onMutate: async (content) => {
             if (!conversationId || !content.trim()) return;
-
+            console.log(content)
             await queryClient.cancelQueries({ queryKey });
 
             const previousMessages = queryClient.getQueryData<Message[]>(queryKey);
@@ -85,9 +84,16 @@ export function useChat({ conversationId, userId, sender }: UseChatOptions) {
         },
         onSuccess: (savedMsg, _content, context) => {
             if (!context) return;
-            queryClient.setQueryData<Message[]>(queryKey, (old) =>
-                (old || []).map((m) => (m.id === context.optimisticMessageId ? savedMsg : m))
-            );
+            queryClient.setQueryData<Message[]>(queryKey, (old) => {
+                const current = old || [];
+                // Check if message was already added via WebSocket
+                const exists = current.some((m) => m.id === savedMsg.id);
+                if (exists) {
+                    // Remove optimistic message if real one exists
+                    return current.filter((m) => m.id !== context.optimisticMessageId);
+                }
+                return current.map((m) => (m.id === context.optimisticMessageId ? savedMsg : m));
+            });
         },
     });
 
