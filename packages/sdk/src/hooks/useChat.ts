@@ -1,4 +1,5 @@
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useEffect, useCallback, useMemo } from "react";
 import { api } from "../api/client";
 import { useWebSocket } from "./useWebSocket";
 import type { Message } from "../types";
@@ -10,76 +11,95 @@ interface UseChatOptions {
 }
 
 export function useChat({ conversationId, userId, sender }: UseChatOptions) {
-    const [messages, setMessages] = useState<Message[]>([]);
-    const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
-
+    const queryClient = useQueryClient();
     const { isConnected, lastMessage } = useWebSocket(conversationId);
 
-    // Load message history
-    const loadHistory = useCallback(async () => {
-        if (!conversationId) return;
-        setIsLoading(true);
-        try {
-            const { data } = await api.messages.list(conversationId);
-            setMessages(data);
-        } catch (err: any) {
-            setError(err.message);
-        } finally {
-            setIsLoading(false);
-        }
-    }, [conversationId]);
+    const queryKey = useMemo(() => ["messages", conversationId], [conversationId]);
 
-    useEffect(() => {
-        loadHistory();
-    }, [loadHistory]);
+    // Load message history
+    const {
+        data: messages = [],
+        isLoading,
+        error: queryError,
+        refetch,
+    } = useQuery({
+        queryKey,
+        queryFn: async () => {
+            if (!conversationId) return [];
+            const { data } = await api.messages.list(conversationId);
+            return data;
+        },
+        enabled: !!conversationId,
+    });
 
     // Handle incoming real-time messages
     useEffect(() => {
         if (lastMessage?.type === "NEW_MESSAGE") {
             const newMsg = lastMessage.data as Message;
 
-            setMessages((prev) => {
-                // Prevent duplicate messages (e.g. if we get it via WS and we just sent it)
-                const exists = prev.some((m) => m.id === newMsg.id);
-                if (exists) return prev;
-                return [...prev, newMsg];
+            queryClient.setQueryData<Message[]>(queryKey, (old) => {
+                const current = old || [];
+                // Prevent duplicate messages
+                if (current.some((m) => m.id === newMsg.id)) return current;
+                return [...current, newMsg];
             });
         }
-    }, [lastMessage]);
+    }, [lastMessage, queryClient, queryKey]);
 
     // Send message with optimistic UI
-    const sendMessage = useCallback(async (content: string) => {
-        if (!conversationId || !content.trim()) return;
-
-        // Optimistic message
-        const optimisticMessage: Message = {
-            id: crypto.randomUUID(),
-            conversationId,
-            content,
-            sender,
-            createdAt: new Date(),
-        };
-
-        setMessages((prev) => [...prev, optimisticMessage]);
-
-        try {
-            const savedMsg = await api.messages.send({
+    const { mutateAsync: sendMessageMutation, error: mutationError } = useMutation({
+        mutationFn: async (content: string) => {
+            return api.messages.send({
                 conversationId,
                 sender,
                 content,
             });
+        },
+        onMutate: async (content) => {
+            await queryClient.cancelQueries({ queryKey });
 
-            // Update the optimistic message with the real one from DB
-            setMessages((prev) =>
-                prev.map((m) => (m.id === optimisticMessage.id ? savedMsg : m))
+            const previousMessages = queryClient.getQueryData<Message[]>(queryKey);
+
+            const optimisticMessage: Message = {
+                id: crypto.randomUUID(),
+                conversationId: conversationId!,
+                content,
+                sender,
+                createdAt: new Date(),
+            };
+
+            queryClient.setQueryData<Message[]>(queryKey, (old: Message[] | undefined) => [
+                ...(old || []),
+                optimisticMessage,
+            ]);
+
+            return { previousMessages, optimisticMessageId: optimisticMessage.id };
+        },
+        onError: (_err, _content, context) => {
+            if (context?.previousMessages) {
+                queryClient.setQueryData(queryKey, context.previousMessages);
+            }
+        },
+        onSuccess: (savedMsg, _content, context) => {
+            queryClient.setQueryData<Message[]>(queryKey, (old) =>
+                (old || []).map((m) => (m.id === context.optimisticMessageId ? savedMsg : m))
             );
-        } catch (err: any) {
-            // Revert optimistic update on error
-            setMessages((prev) => prev.filter((m) => m.id !== optimisticMessage.id));
-            setError(err.message);
-        }
-    }, [conversationId, sender]);
+        },
+    });
+
+    const sendMessage = useCallback(
+        async (content: string) => {
+            if (!conversationId || !content.trim()) return;
+            try {
+                await sendMessageMutation(content);
+            } catch (error) {
+                console.error("Failed to send message", error);
+            }
+        },
+        [conversationId, sendMessageMutation]
+    );
+
+    const error = (queryError as any)?.message || (mutationError as any)?.message || null;
 
     return {
         messages,
@@ -87,6 +107,6 @@ export function useChat({ conversationId, userId, sender }: UseChatOptions) {
         isConnected,
         error,
         sendMessage,
-        loadMore: loadHistory, // Simplified for now, can be extended for cursor pagination
+        loadMore: refetch,
     };
 }

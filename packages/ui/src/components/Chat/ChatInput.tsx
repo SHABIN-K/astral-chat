@@ -54,7 +54,7 @@ export function ChatInput({
                     onChange={handleChange}
                     onKeyDown={handleKeyDown}
                     placeholder={placeholder}
-                    className="flex-1 bg-transparent border-none focus:ring-0 text-sm py-2 px-2 resize-none max-h-32 custom-scrollbar"
+                    className="flex-1 bg-transparent border-none outline-none focus:ring-0 text-sm py-2 px-2 resize-none max-h-32 custom-scrollbar"
                 />
                 <button
                     type="submit"

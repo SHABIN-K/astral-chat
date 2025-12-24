@@ -8,7 +8,7 @@ export function useWebSocket(conversationId?: string) {
     const [isConnected, setIsConnected] = useState(false);
     const [lastMessage, setLastMessage] = useState<WSEvent | null>(null);
     const socketRef = useRef<WebSocket | null>(null);
-    const reconnectTimeoutRef = useRef<Timer | null>(null);
+    const reconnectTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     const connect = useCallback(() => {
         if (!conversationId) return;
