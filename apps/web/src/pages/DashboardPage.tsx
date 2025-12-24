@@ -13,7 +13,9 @@ export function DashboardPage() {
         queryFn: async () => {
             const { data } = await api.conversations.list()
             return data
-        }
+        },
+        staleTime: Infinity,
+        refetchOnWindowFocus: false,
     })
 
     const { messages, sendMessage, isLoading: isLoadingMessages, isConnected } = useChat({

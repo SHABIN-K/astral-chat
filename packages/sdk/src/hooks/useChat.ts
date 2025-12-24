@@ -29,6 +29,9 @@ export function useChat({ conversationId, sender }: UseChatOptions) {
             return data;
         },
         enabled: !!conversationId,
+        staleTime: Infinity,
+        refetchOnWindowFocus: false,
+        refetchOnMount: false,
     });
 
     // Handle incoming real-time messages
@@ -57,7 +60,6 @@ export function useChat({ conversationId, sender }: UseChatOptions) {
         },
         onMutate: async (content) => {
             if (!conversationId || !content.trim()) return;
-            console.log(content)
             await queryClient.cancelQueries({ queryKey });
 
             const previousMessages = queryClient.getQueryData<Message[]>(queryKey);
@@ -86,7 +88,6 @@ export function useChat({ conversationId, sender }: UseChatOptions) {
             if (!context) return;
             queryClient.setQueryData<Message[]>(queryKey, (old) => {
                 const current = old || [];
-                // Check if message was already added via WebSocket
                 const exists = current.some((m) => m.id === savedMsg.id);
                 if (exists) {
                     // Remove optimistic message if real one exists
