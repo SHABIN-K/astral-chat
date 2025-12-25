@@ -1,4 +1,4 @@
-import sharedConfig from "../../packages/ui/tailwind.config";
+import sharedConfig from "@astral-chat/config/tailwind";
 import type { Config } from "tailwindcss";
 
 const config: Config = {

@@ -1,0 +1,21 @@
+{
+    "name": "@astral-chat/config",
+    "version": "0.0.1",
+    "private": true,
+    "type": "module",
+    "exports": {
+        "./tailwind": {
+            "types": "./tailwind.config.ts",
+            "default": "./tailwind.config.ts"
+        },
+        "./postcss": {
+            "types": "./postcss.d.ts",
+            "default": "./postcss.config.js"
+        }
+    },
+    "dependencies": {
+        "tailwindcss": "^3.4.13",
+        "autoprefixer": "^10.4.20",
+        "postcss": "^8.4.47"
+    }
+}

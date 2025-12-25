@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 import App from './App'
-import '@astral-chat/ui/src/styles/globals.css'
+import '@astral-chat/ui/styles'
 
 const queryClient = new QueryClient()
 
